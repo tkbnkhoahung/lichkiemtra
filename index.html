@@ -55,7 +55,7 @@
         <!-- Block Selection -->
         <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
             <h2 class="text-xl font-semibold text-indigo-800 mb-4">🎯 Chọn khối học</h2>
-            <div class="flex flex-wrap gap-4 justify-center">
+            <div class="flex flex-wrap gap-4 justify-center mb-4">
                 <button id="block10" class="block-btn bg-blue-100 text-blue-700 px-6 py-3 rounded-lg font-medium hover:bg-blue-200 transition-colors">
                     🔵 Khối 10
                 </button>
@@ -64,6 +64,11 @@
                 </button>
                 <button id="block12" class="block-btn bg-purple-100 text-purple-700 px-6 py-3 rounded-lg font-medium hover:bg-purple-200 transition-colors">
                     🟣 Khối 12
+                </button>
+            </div>
+            <div class="text-center">
+                <button id="exportWallpaper" class="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:from-pink-600 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    📱 Xuất Hình Nền Điện Thoại
                 </button>
             </div>
         </div>
@@ -134,6 +139,8 @@
             </div>
         </div>
 
+        <!-- Hidden Canvas for Wallpaper Generation -->
+        <canvas id="wallpaperCanvas" style="display: none;" width="1080" height="1920"></canvas>
 
     </div>
 
@@ -321,8 +328,171 @@
                 activeBtn.classList.add('bg-purple-600', 'text-white');
             }
             
+            // Enable export button when block is selected
+            document.getElementById('exportWallpaper').disabled = false;
+            
             updateSelectedBlockStats();
             filterData();
+        }
+
+        // Generate wallpaper for selected block
+        function generateWallpaper() {
+            if (!selectedBlock) return;
+
+            const canvas = document.getElementById('wallpaperCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Block colors
+            const blockColors = {
+                '10': { primary: '#3B82F6', secondary: '#DBEAFE', accent: '#1E40AF' },
+                '11': { primary: '#10B981', secondary: '#D1FAE5', accent: '#047857' },
+                '12': { primary: '#8B5CF6', secondary: '#EDE9FE', accent: '#5B21B6' }
+            };
+            
+            const colors = blockColors[selectedBlock];
+            
+            // Create gradient background
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, colors.secondary);
+            gradient.addColorStop(1, '#F8FAFC');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Header section
+            ctx.fillStyle = colors.primary;
+            ctx.fillRect(0, 0, canvas.width, 300);
+            
+            // School name
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 48px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('🏫 THPT Nguyễn Khuyến', canvas.width / 2, 80);
+            
+            ctx.font = 'bold 36px Arial';
+            ctx.fillText('LỊCH KIỂM TRA GIỮA HỌC KÌ I', canvas.width / 2, 140);
+            
+            ctx.font = '28px Arial';
+            ctx.fillText('NĂM HỌC 2025-2026', canvas.width / 2, 180);
+            
+            // Block indicator
+            const blockIcons = { '10': '🔵', '11': '🟢', '12': '🟣' };
+            ctx.font = 'bold 40px Arial';
+            ctx.fillText(`${blockIcons[selectedBlock]} KHỐI ${selectedBlock}`, canvas.width / 2, 240);
+            
+            // Get block exams
+            const blockExams = examData.filter(exam => exam.block === selectedBlock);
+            
+            // Group by date
+            const groupedByDate = {};
+            blockExams.forEach(exam => {
+                if (!groupedByDate[exam.date]) {
+                    groupedByDate[exam.date] = [];
+                }
+                groupedByDate[exam.date].push(exam);
+            });
+            
+            // Sort dates
+            const dayOrder = {
+                'Thứ hai': 1, 'Thứ ba': 2, 'Thứ tư': 3, 'Thứ năm': 4, 
+                'Thứ sáu': 5, 'Thứ bảy': 6, 'Chủ nhật': 7
+            };
+            
+            const sortedDates = Object.keys(groupedByDate).sort((a, b) => {
+                const dateA = new Date(a.split('/').reverse().join('-'));
+                const dateB = new Date(b.split('/').reverse().join('-'));
+                
+                if (dateA.getTime() !== dateB.getTime()) {
+                    return dateA - dateB;
+                }
+                
+                const dayA = dayOrder[groupedByDate[a][0].day] || 8;
+                const dayB = dayOrder[groupedByDate[b][0].day] || 8;
+                return dayA - dayB;
+            });
+            
+            let yPos = 350;
+            const cardHeight = 120;
+            const cardMargin = 20;
+            const cardPadding = 20;
+            
+            sortedDates.forEach(date => {
+                const exams = groupedByDate[date];
+                
+                // Sort exams within the same date
+                exams.sort((a, b) => {
+                    if (a.session !== b.session) {
+                        return a.session === 'Sáng' ? -1 : 1;
+                    }
+                    const timeA = a.startTime.split(':').map(Number);
+                    const timeB = b.startTime.split(':').map(Number);
+                    const minutesA = timeA[0] * 60 + timeA[1];
+                    const minutesB = timeB[0] * 60 + timeB[1];
+                    return minutesA - minutesB;
+                });
+                
+                // Date header
+                ctx.fillStyle = colors.accent;
+                ctx.font = 'bold 32px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText(`📅 ${exams[0].day}, ${date}`, 40, yPos);
+                yPos += 50;
+                
+                // Exams for this date
+                exams.forEach(exam => {
+                    // Card background
+                    ctx.fillStyle = 'white';
+                    ctx.shadowColor = 'rgba(0,0,0,0.1)';
+                    ctx.shadowBlur = 10;
+                    ctx.shadowOffsetY = 4;
+                    ctx.fillRect(40, yPos, canvas.width - 80, cardHeight);
+                    ctx.shadowBlur = 0;
+                    
+                    // Card border
+                    ctx.strokeStyle = colors.primary;
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(40, yPos, canvas.width - 80, cardHeight);
+                    
+                    // Subject name
+                    ctx.fillStyle = colors.accent;
+                    ctx.font = 'bold 36px Arial';
+                    ctx.textAlign = 'left';
+                    ctx.fillText(exam.subject, 60, yPos + 45);
+                    
+                    // Session and time
+                    const sessionIcon = exam.session === 'Sáng' ? '🌅' : '🌆';
+                    ctx.fillStyle = '#374151';
+                    ctx.font = '28px Arial';
+                    ctx.fillText(`${sessionIcon} ${exam.session}`, 60, yPos + 80);
+                    
+                    ctx.fillText(`⏰ ${exam.startTime} - ${exam.endTime}`, 300, yPos + 80);
+                    
+                    // Duration
+                    ctx.fillStyle = colors.primary;
+                    ctx.font = 'bold 24px Arial';
+                    ctx.textAlign = 'right';
+                    ctx.fillText(`${exam.duration} phút`, canvas.width - 60, yPos + 60);
+                    
+                    yPos += cardHeight + cardMargin;
+                });
+                
+                yPos += 30; // Extra space between dates
+            });
+            
+            // Footer
+            ctx.fillStyle = colors.primary;
+            ctx.font = '24px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('📢 HS có mặt: Sáng 7h00\' - Chiều 13h00\'', canvas.width / 2, canvas.height - 80);
+            ctx.fillText('⚠️ Đến muộn quá 5 phút không được vào phòng thi', canvas.width / 2, canvas.height - 40);
+            
+            // Download the image
+            const link = document.createElement('a');
+            link.download = `lich-thi-khoi-${selectedBlock}-wallpaper.png`;
+            link.href = canvas.toDataURL();
+            link.click();
         }
 
         // Display exams
@@ -439,6 +609,9 @@
         document.getElementById('block10').addEventListener('click', () => selectBlock('10'));
         document.getElementById('block11').addEventListener('click', () => selectBlock('11'));
         document.getElementById('block12').addEventListener('click', () => selectBlock('12'));
+        
+        // Add event listener for wallpaper export
+        document.getElementById('exportWallpaper').addEventListener('click', generateWallpaper);
 
         // Initialize with sample data
         function initializeSampleData() {
@@ -455,5 +628,5 @@
         // Initialize on page load
         initializeSampleData();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98ec973884eafd84',t:'MTc2MDUwMjcyNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98eca613f1d23d86',t:'MTc2MDUwMzMzNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
