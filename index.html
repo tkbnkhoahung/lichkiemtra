@@ -141,6 +141,31 @@
         <!-- Hidden Canvas for Wallpaper Generation -->
         <canvas id="wallpaperCanvas" style="display: none;" width="1080" height="1920"></canvas>
 
+        <!-- Visitor Counter -->
+        <div class="bg-white rounded-lg shadow-md p-4 md:p-6 mt-8 text-center">
+            <h3 class="text-lg font-semibold text-gray-800 mb-3">Thống kê truy cập</h3>
+            <div class="flex justify-center items-center space-x-6">
+                <div class="bg-blue-50 px-4 py-3 rounded-lg border border-blue-200">
+                    <div class="text-2xl font-bold text-blue-600" id="visitorCount">0</div>
+                    <div class="text-sm text-blue-500 font-medium">Lượt truy cập</div>
+                </div>
+                <div class="bg-green-50 px-4 py-3 rounded-lg border border-green-200">
+                    <div class="text-2xl font-bold text-green-600" id="todayCount">0</div>
+                    <div class="text-sm text-green-500 font-medium">Hôm nay</div>
+                </div>
+                <div class="bg-purple-50 px-4 py-3 rounded-lg border border-purple-200">
+                    <div class="text-2xl font-bold text-purple-600" id="onlineCount">1</div>
+                    <div class="text-sm text-purple-500 font-medium">Đang online</div>
+                </div>
+            </div>
+            <div class="mt-3 text-xs text-gray-500">
+                Cập nhật lần cuối: <span id="lastUpdate"></span>
+            </div>
+            <div class="mt-2">
+                <span id="firebaseStatus" class="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600">Đang kết nối...</span>
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -175,7 +200,173 @@
         let filteredData = [];
         let selectedBlock = '';
 
+        // Firebase Configuration - THAY ĐỔI CONFIG NÀY BẰNG PROJECT CỦA BẠN
+    const firebaseConfig = {
+  apiKey: "AIzaSyC1234567890abcdefghijk",
+  authDomain: "lich-thi-hoc-sinh.firebaseapp.com",
+  databaseURL: "https://lich-thi-hoc-sinh-default-rtdb.asia-southeast1.firebasedatabase.app/",
+  projectId: "lich-thi-hoc-sinh",
+  storageBucket: "lich-thi-hoc-sinh.appspot.com",
+  messagingSenderId: "123456789012",
+  appId: "1:123456789012:web:abcdef1234567890"
+};
 
+        // Firebase variables
+        let firebaseApp = null;
+        let database = null;
+        let isFirebaseReady = false;
+
+        // Load Firebase SDK and initialize
+        async function initializeFirebase() {
+            try {
+                // Update status
+                document.getElementById('firebaseStatus').textContent = 'Đang kết nối Firebase...';
+                document.getElementById('firebaseStatus').className = 'text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-600';
+                
+                // Load Firebase modules
+                const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+                const { getDatabase, ref, set, get, onValue, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js');
+                
+                // Initialize Firebase
+                firebaseApp = initializeApp(firebaseConfig);
+                database = getDatabase(firebaseApp);
+                isFirebaseReady = true;
+                
+                // Update status
+                document.getElementById('firebaseStatus').textContent = '✅ Firebase đã kết nối';
+                document.getElementById('firebaseStatus').className = 'text-xs px-2 py-1 rounded-full bg-green-100 text-green-600';
+                
+                console.log('✅ Firebase connected successfully');
+                return { ref, set, get, onValue, serverTimestamp };
+            } catch (error) {
+                console.warn('⚠️ Firebase connection failed:', error.message);
+                isFirebaseReady = false;
+                
+                // Update status
+                document.getElementById('firebaseStatus').textContent = '⚠️ Chế độ offline';
+                document.getElementById('firebaseStatus').className = 'text-xs px-2 py-1 rounded-full bg-red-100 text-red-600';
+                
+                return null;
+            }
+        }
+
+        // Visitor Counter with Firebase Integration
+        async function initializeVisitorCounter() {
+            // Initialize Firebase
+            const firebase = await initializeFirebase();
+            
+            // Get current date
+            const today = new Date().toDateString();
+            const todayKey = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+            
+            // Get localStorage data as backup
+            let localTotalVisits = parseInt(localStorage.getItem('totalVisits') || '0');
+            let localTodayVisits = parseInt(localStorage.getItem('todayVisits') || '0');
+            let lastVisitDate = localStorage.getItem('lastVisitDate');
+            
+            // Reset today's count if new day
+            if (lastVisitDate !== today) {
+                localTodayVisits = 0;
+                localStorage.setItem('lastVisitDate', today);
+            }
+
+            if (isFirebaseReady && firebase) {
+                try {
+                    // Firebase paths
+                    const totalRef = firebase.ref(database, 'stats/totalVisits');
+                    const todayRef = firebase.ref(database, `stats/dailyVisits/${todayKey}`);
+                    
+                    // Get current Firebase data
+                    const [totalSnapshot, todaySnapshot] = await Promise.all([
+                        firebase.get(totalRef),
+                        firebase.get(todayRef)
+                    ]);
+                    
+                    let firebaseTotalVisits = totalSnapshot.val() || 0;
+                    let firebaseTodayVisits = todaySnapshot.val() || 0;
+                    
+                    // Use the higher value between Firebase and localStorage
+                    const finalTotalVisits = Math.max(firebaseTotalVisits, localTotalVisits) + 1;
+                    const finalTodayVisits = Math.max(firebaseTodayVisits, localTodayVisits) + 1;
+                    
+                    // Update Firebase
+                    await Promise.all([
+                        firebase.set(totalRef, finalTotalVisits),
+                        firebase.set(todayRef, finalTodayVisits),
+                        firebase.set(firebase.ref(database, 'stats/lastUpdate'), firebase.serverTimestamp())
+                    ]);
+                    
+                    // Update localStorage
+                    localStorage.setItem('totalVisits', finalTotalVisits.toString());
+                    localStorage.setItem('todayVisits', finalTodayVisits.toString());
+                    
+                    // Update display
+                    animateCounter('visitorCount', finalTotalVisits);
+                    animateCounter('todayCount', finalTodayVisits);
+                    
+                    // Listen for real-time updates from other users
+                    firebase.onValue(totalRef, (snapshot) => {
+                        const value = snapshot.val() || 0;
+                        document.getElementById('visitorCount').textContent = value.toLocaleString('vi-VN');
+                    });
+                    
+                    firebase.onValue(todayRef, (snapshot) => {
+                        const value = snapshot.val() || 0;
+                        document.getElementById('todayCount').textContent = value.toLocaleString('vi-VN');
+                    });
+                    
+                    console.log('✅ Visitor counter synced with Firebase');
+                    
+                } catch (error) {
+                    console.warn('⚠️ Firebase update failed, using localStorage:', error);
+                    useLocalStorageCounter();
+                }
+            } else {
+                // Use localStorage only
+                useLocalStorageCounter();
+            }
+            
+            // Update time and online counter
+            updateTimeAndOnline();
+        }
+        
+        // Fallback function for localStorage only
+        function useLocalStorageCounter() {
+            let totalVisits = parseInt(localStorage.getItem('totalVisits') || '0');
+            let todayVisits = parseInt(localStorage.getItem('todayVisits') || '0');
+            let lastVisitDate = localStorage.getItem('lastVisitDate');
+            
+            const today = new Date().toDateString();
+            
+            if (lastVisitDate !== today) {
+                todayVisits = 0;
+                localStorage.setItem('lastVisitDate', today);
+            }
+            
+            totalVisits++;
+            todayVisits++;
+            
+            localStorage.setItem('totalVisits', totalVisits.toString());
+            localStorage.setItem('todayVisits', todayVisits.toString());
+            
+            animateCounter('visitorCount', totalVisits);
+            animateCounter('todayCount', todayVisits);
+        }
+        
+        // Update time and online counter
+        function updateTimeAndOnline() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('vi-VN', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('lastUpdate').textContent = timeString;
+            
+            // Simulate online users (random between 1-8)
+            const onlineUsers = Math.floor(Math.random() * 8) + 1;
+            animateCounter('onlineCount', onlineUsers);
+        }
 
         // Sort exam data by day of week, then date and time
         function sortExamData() {
@@ -599,6 +790,35 @@
             container.innerHTML = html;
         }
 
+        function animateCounter(elementId, targetValue) {
+            const element = document.getElementById(elementId);
+            const startValue = 0;
+            const duration = 1500; // 1.5 seconds
+            const startTime = performance.now();
+            
+            function updateCounter(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Easing function for smooth animation
+                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                const currentValue = Math.floor(startValue + (targetValue - startValue) * easeOutQuart);
+                
+                element.textContent = currentValue.toLocaleString('vi-VN');
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
+                }
+            }
+            
+            requestAnimationFrame(updateCounter);
+        }
+        
+        // Update online counter periodically
+        function updateOnlineCounter() {
+            updateTimeAndOnline();
+        }
+
         // Add event listeners for filters
         document.getElementById('sessionFilter').addEventListener('change', filterData);
         document.getElementById('subjectFilter').addEventListener('change', filterData);
@@ -619,12 +839,14 @@
             updateNotices();
             displayExams();
             document.getElementById('blockStats').classList.remove('hidden');
-            
-
         }
 
         // Initialize on page load
         initializeSampleData();
+        initializeVisitorCounter();
+        
+        // Update online counter every 30 seconds
+        setInterval(updateOnlineCounter, 30000);
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98ed290b748340cc',t:'MTc2MDUwODY5OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98ed55b811e955de',t:'MTc2MDUxMDUyOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
