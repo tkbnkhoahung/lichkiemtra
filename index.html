@@ -37,57 +37,57 @@
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-full">
+<body class="bg-gray-50 min-h-full">
     <div class="container mx-auto px-4 py-8">
         <!-- Header -->
         <div class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-indigo-800 mb-2">🏫 Trường THPT Nguyễn Khuyến</h1>
-            <h2 class="text-xl md:text-2xl font-semibold text-indigo-700 mb-2">LỊCH KIỂM TRA GIỮA HỌC KÌ I</h2>
-            <p class="text-lg text-indigo-600 font-medium mb-4">NĂM HỌC 2025-2026</p>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Trường THPT Nguyễn Khuyến</h1>
+            <h2 class="text-xl md:text-2xl font-semibold text-gray-700 mb-2">LỊCH KIỂM TRA GIỮA HỌC KÌ I</h2>
+            <p class="text-lg text-gray-600 font-medium mb-4">NĂM HỌC 2025-2026</p>
             <div class="flex justify-center">
                 <a href="https://tkbnkhoahung.github.io/tkbnk2526hs/" target="_blank" rel="noopener noreferrer" 
-                   class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg font-bold text-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
-                    🏠 Trang Chủ
+                   class="bg-blue-500 text-white px-6 py-3 rounded-lg font-medium text-lg hover:bg-blue-600 transition-colors duration-300">
+                    Trang Chủ
                 </a>
             </div>
         </div>
 
         <!-- Block Selection -->
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-            <h2 class="text-xl font-semibold text-indigo-800 mb-4">🎯 Chọn khối học</h2>
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Chọn khối học</h2>
             <div class="flex flex-wrap gap-4 justify-center mb-4">
-                <button id="block10" class="block-btn bg-blue-100 text-blue-700 px-6 py-3 rounded-lg font-medium hover:bg-blue-200 transition-colors">
-                    🔵 Khối 10
+                <button id="block10" class="block-btn bg-blue-50 text-blue-700 px-6 py-3 rounded-lg font-medium hover:bg-blue-100 transition-colors border border-blue-200">
+                    Khối 10
                 </button>
-                <button id="block11" class="block-btn bg-green-100 text-green-700 px-6 py-3 rounded-lg font-medium hover:bg-green-200 transition-colors">
-                    🟢 Khối 11
+                <button id="block11" class="block-btn bg-green-50 text-green-700 px-6 py-3 rounded-lg font-medium hover:bg-green-100 transition-colors border border-green-200">
+                    Khối 11
                 </button>
-                <button id="block12" class="block-btn bg-purple-100 text-purple-700 px-6 py-3 rounded-lg font-medium hover:bg-purple-200 transition-colors">
-                    🟣 Khối 12
+                <button id="block12" class="block-btn bg-purple-50 text-purple-700 px-6 py-3 rounded-lg font-medium hover:bg-purple-100 transition-colors border border-purple-200">
+                    Khối 12
                 </button>
             </div>
             <div class="text-center">
-                <button id="exportWallpaper" class="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:from-pink-600 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                    📱 Xuất Hình Nền Điện Thoại
+                <button id="exportWallpaper" class="bg-gray-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    Xuất Hình Nền Điện Thoại
                 </button>
             </div>
         </div>
 
         <!-- Filter Section -->
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-            <h2 class="text-xl font-semibold text-indigo-800 mb-4">🔍 Bộ lọc</h2>
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Bộ lọc</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-blue-700 mb-2">Buổi</label>
-                    <select id="sessionFilter" class="w-full px-3 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-blue-800">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Buổi</label>
+                    <select id="sessionFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-800">
                         <option value="">Tất cả buổi</option>
                         <option value="Sáng">Buổi sáng</option>
                         <option value="Chiều">Buổi chiều</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-green-700 mb-2">Môn học</label>
-                    <select id="subjectFilter" class="w-full px-3 py-2 border border-green-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-green-800">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Môn học</label>
+                    <select id="subjectFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-800">
                         <option value="">Tất cả môn</option>
                     </select>
                 </div>
@@ -95,20 +95,20 @@
         </div>
 
         <!-- Notice Section -->
-        <div id="noticeSection" class="bg-white rounded-xl shadow-lg p-4 md:p-6 mb-8 hidden">
-            <h2 class="text-xl font-semibold text-red-700 mb-4">📢 Thông báo quan trọng</h2>
-            <div id="morningNotice" class="notice-box p-4 rounded-lg mb-4 hidden">
-                <h3 class="font-semibold text-amber-800 mb-2">🌅 Buổi thi sáng</h3>
-                <div class="text-sm text-amber-700 space-y-1">
+        <div id="noticeSection" class="bg-white rounded-lg shadow-md p-4 md:p-6 mb-8 hidden">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Thông báo quan trọng</h2>
+            <div id="morningNotice" class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg mb-4 hidden">
+                <h3 class="font-semibold text-gray-800 mb-2">Buổi thi sáng</h3>
+                <div class="text-sm text-gray-700 space-y-1">
                     <p><strong class="text-red-600">Ghi chú:</strong></p>
                     <p>• HS đến sau giờ phát đề 5 phút không được vào phòng kiểm tra.</p>
                     <p>• Các buổi không kiểm tra HS được nghỉ.</p>
                     <p>• <strong class="text-red-600">Học sinh có mặt: buổi sáng 7h00'.</strong></p>
                 </div>
             </div>
-            <div id="afternoonNotice" class="notice-box p-4 rounded-lg hidden">
-                <h3 class="font-semibold text-amber-800 mb-2">🌆 Buổi thi chiều</h3>
-                <div class="text-sm text-amber-700 space-y-1">
+            <div id="afternoonNotice" class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg hidden">
+                <h3 class="font-semibold text-gray-800 mb-2">Buổi thi chiều</h3>
+                <div class="text-sm text-gray-700 space-y-1">
                     <p><strong class="text-red-600">Ghi chú:</strong></p>
                     <p>• HS đến sau giờ phát đề 5 phút không được vào phòng kiểm tra.</p>
                     <p>• Các buổi không kiểm tra HS được nghỉ.</p>
@@ -118,23 +118,22 @@
         </div>
 
         <!-- Block Statistics -->
-        <div id="blockStats" class="bg-white rounded-xl shadow-lg p-4 md:p-6 mb-8 hidden">
-            <h2 class="text-xl font-semibold text-purple-700 mb-4">📈 Thống kê khối được chọn</h2>
-            <div id="selectedBlockStat" class="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
-                <h4 class="font-semibold text-indigo-800 mb-2" id="selectedBlockTitle">Chọn một khối để xem thống kê</h4>
-                <div class="text-sm text-indigo-700 space-y-1" id="selectedBlockInfo">
+        <div id="blockStats" class="bg-white rounded-lg shadow-md p-4 md:p-6 mb-8 hidden">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Thống kê khối được chọn</h2>
+            <div id="selectedBlockStat" class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <h4 class="font-semibold text-gray-800 mb-2" id="selectedBlockTitle">Chọn một khối để xem thống kê</h4>
+                <div class="text-sm text-gray-700 space-y-1" id="selectedBlockInfo">
                     <p>Vui lòng chọn khối học để xem thông tin chi tiết</p>
                 </div>
             </div>
         </div>
 
         <!-- Exam Schedule Display -->
-        <div class="bg-white rounded-xl shadow-lg p-4 md:p-6 mobile-responsive">
-            <h2 class="text-xl font-semibold text-teal-700 mb-4">📅 Lịch Thi</h2>
+        <div class="bg-white rounded-lg shadow-md p-4 md:p-6 mobile-responsive">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Lịch Thi</h2>
             <div id="examSchedule" class="space-y-4">
-                <div class="text-center text-blue-600 py-8">
-                    <div class="text-6xl mb-4">📋</div>
-                    <p>Vui lòng chọn khối học để xem lịch thi</p>
+                <div class="text-center text-gray-600 py-8">
+                    <p class="text-lg">Vui lòng chọn khối học để xem lịch thi</p>
                 </div>
             </div>
         </div>
@@ -249,16 +248,16 @@
 
 
             const blockColors = {
-                '10': { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-800', icon: '🔵' },
-                '11': { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-800', icon: '🟢' },
-                '12': { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-800', icon: '🟣' }
+                '10': { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-800' },
+                '11': { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-800' },
+                '12': { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-800' }
             };
 
             const color = blockColors[selectedBlock];
             const statDiv = document.getElementById('selectedBlockStat');
             statDiv.className = `${color.bg} ${color.border} border rounded-lg p-4`;
 
-            document.getElementById('selectedBlockTitle').textContent = `${color.icon} Khối ${selectedBlock}`;
+            document.getElementById('selectedBlockTitle').textContent = `Khối ${selectedBlock}`;
             document.getElementById('selectedBlockTitle').className = `font-semibold ${color.text} mb-2`;
             
             document.getElementById('selectedBlockInfo').innerHTML = `
@@ -313,19 +312,19 @@
             
             // Update button styles
             document.querySelectorAll('.block-btn').forEach(btn => {
-                btn.classList.remove('bg-blue-600', 'bg-green-600', 'bg-purple-600', 'text-white');
-                btn.classList.add('bg-orange-100', 'text-orange-700');
+                btn.classList.remove('bg-blue-500', 'bg-green-500', 'bg-purple-500', 'text-white', 'border-blue-500', 'border-green-500', 'border-purple-500');
+                btn.classList.add('bg-gray-50', 'text-gray-700', 'border-gray-200');
             });
             
             const activeBtn = document.getElementById(`block${block}`);
-            activeBtn.classList.remove('bg-orange-100', 'text-orange-700');
+            activeBtn.classList.remove('bg-gray-50', 'text-gray-700', 'border-gray-200');
             
             if (block === '10') {
-                activeBtn.classList.add('bg-blue-600', 'text-white');
+                activeBtn.classList.add('bg-blue-500', 'text-white', 'border-blue-500');
             } else if (block === '11') {
-                activeBtn.classList.add('bg-green-600', 'text-white');
+                activeBtn.classList.add('bg-green-500', 'text-white', 'border-green-500');
             } else if (block === '12') {
-                activeBtn.classList.add('bg-purple-600', 'text-white');
+                activeBtn.classList.add('bg-purple-500', 'text-white', 'border-purple-500');
             }
             
             // Enable export button when block is selected
@@ -369,7 +368,7 @@
             ctx.fillStyle = 'white';
             ctx.font = 'bold 48px Arial';
             ctx.textAlign = 'center';
-            ctx.fillText('🏫 THPT Nguyễn Khuyến', canvas.width / 2, 80);
+            ctx.fillText('THPT Nguyễn Khuyến', canvas.width / 2, 80);
             
             ctx.font = 'bold 36px Arial';
             ctx.fillText('LỊCH KIỂM TRA GIỮA HỌC KÌ I', canvas.width / 2, 140);
@@ -378,9 +377,8 @@
             ctx.fillText('NĂM HỌC 2025-2026', canvas.width / 2, 180);
             
             // Block indicator
-            const blockIcons = { '10': '🔵', '11': '🟢', '12': '🟣' };
             ctx.font = 'bold 40px Arial';
-            ctx.fillText(`${blockIcons[selectedBlock]} KHỐI ${selectedBlock}`, canvas.width / 2, 240);
+            ctx.fillText(`KHỐI ${selectedBlock}`, canvas.width / 2, 240);
             
             // Get block exams
             const blockExams = examData.filter(exam => exam.block === selectedBlock);
@@ -437,7 +435,7 @@
                 ctx.fillStyle = colors.accent;
                 ctx.font = 'bold 32px Arial';
                 ctx.textAlign = 'left';
-                ctx.fillText(`📅 ${exams[0].day}, ${date}`, 40, yPos);
+                ctx.fillText(`${exams[0].day}, ${date}`, 40, yPos);
                 yPos += 50;
                 
                 // Exams for this date
@@ -462,12 +460,11 @@
                     ctx.fillText(exam.subject, 60, yPos + 45);
                     
                     // Session and time
-                    const sessionIcon = exam.session === 'Sáng' ? '🌅' : '🌆';
                     ctx.fillStyle = '#374151';
                     ctx.font = '28px Arial';
-                    ctx.fillText(`${sessionIcon} ${exam.session}`, 60, yPos + 80);
+                    ctx.fillText(`${exam.session}`, 60, yPos + 80);
                     
-                    ctx.fillText(`⏰ ${exam.startTime} - ${exam.endTime}`, 300, yPos + 80);
+                    ctx.fillText(`${exam.startTime} - ${exam.endTime}`, 300, yPos + 80);
                     
                     // Duration
                     ctx.fillStyle = colors.primary;
@@ -485,8 +482,8 @@
             ctx.fillStyle = colors.primary;
             ctx.font = '24px Arial';
             ctx.textAlign = 'center';
-            ctx.fillText('📢 HS có mặt: Sáng 7h00\' - Chiều 13h00\'', canvas.width / 2, canvas.height - 80);
-            ctx.fillText('⚠️ Đến muộn quá 5 phút không được vào phòng thi', canvas.width / 2, canvas.height - 40);
+            ctx.fillText('HS có mặt: Sáng 7h00\' - Chiều 13h00\'', canvas.width / 2, canvas.height - 80);
+            ctx.fillText('Đến muộn quá 5 phút không được vào phòng thi', canvas.width / 2, canvas.height - 40);
             
             // Download the image
             const link = document.createElement('a');
@@ -503,16 +500,14 @@
             if (dataToShow.length === 0) {
                 if (!selectedBlock) {
                     container.innerHTML = `
-                        <div class="text-center text-blue-600 py-8">
-                            <div class="text-6xl mb-4">🎯</div>
-                            <p>Vui lòng chọn khối học để xem lịch thi</p>
+                        <div class="text-center text-gray-600 py-8">
+                            <p class="text-lg">Vui lòng chọn khối học để xem lịch thi</p>
                         </div>
                     `;
                 } else {
                     container.innerHTML = `
-                        <div class="text-center text-red-600 py-8">
-                            <div class="text-6xl mb-4">🔍</div>
-                            <p>Không tìm thấy lịch thi phù hợp với bộ lọc</p>
+                        <div class="text-center text-gray-600 py-8">
+                            <p class="text-lg">Không tìm thấy lịch thi phù hợp với bộ lọc</p>
                         </div>
                     `;
                 }
@@ -564,31 +559,34 @@
 
                 html += `
                     <div class="fade-in mobile-card">
-                        <h3 class="text-lg font-semibold text-indigo-700 mb-3 border-b border-indigo-200 pb-2">
-                            📅 ${exams[0].day}, ${date}
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3 border-b border-gray-200 pb-2">
+                            ${exams[0].day}, ${date}
                         </h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 mb-6">
                 `;
 
                 exams.forEach(exam => {
-                    const sessionIcon = exam.session === 'Sáng' ? '🌅' : '🌆';
-                    const blockColor = exam.block === '10' ? 'bg-blue-50 border-blue-200' : 
-                                      exam.block === '11' ? 'bg-green-50 border-green-200' : 
-                                      'bg-purple-50 border-purple-200';
+                    const blockColor = exam.block === '10' ? 'bg-blue-50 border-blue-300' : 
+                                      exam.block === '11' ? 'bg-green-50 border-green-300' : 
+                                      'bg-purple-50 border-purple-300';
+                    
+                    const blockTextColor = exam.block === '10' ? 'text-blue-600' : 
+                                          exam.block === '11' ? 'text-green-600' : 
+                                          'text-purple-600';
                     
                     html += `
                         <div class="exam-card ${blockColor} border-2 rounded-lg p-4 md:p-5">
                             <div class="flex justify-between items-start mb-3">
-                                <span class="text-lg font-bold text-purple-700">Khối ${exam.block}</span>
-                                <span class="text-sm bg-orange-200 text-orange-800 px-3 py-1 rounded-full font-bold">${exam.duration} phút</span>
+                                <span class="text-lg font-bold ${blockTextColor}">Khối ${exam.block}</span>
+                                <span class="text-sm bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full font-medium">${exam.duration} phút</span>
                             </div>
-                            <h4 class="font-bold text-blue-800 mb-3 text-lg md:text-xl">${exam.subject}</h4>
-                            <div class="text-base text-teal-700 space-y-2 font-semibold">
+                            <h4 class="font-bold text-indigo-600 mb-3 text-lg md:text-xl">${exam.subject}</h4>
+                            <div class="text-base text-cyan-600 space-y-2 font-medium">
                                 <div class="flex items-center">
-                                    ${sessionIcon} <span class="ml-2">${exam.session}</span>
+                                    <span class="w-16">${exam.session}</span>
                                 </div>
                                 <div class="flex items-center">
-                                    ⏰ <span class="ml-2">${exam.startTime} - ${exam.endTime}</span>
+                                    <span>${exam.startTime} - ${exam.endTime}</span>
                                 </div>
                             </div>
                         </div>
@@ -628,5 +626,5 @@
         // Initialize on page load
         initializeSampleData();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98eca613f1d23d86',t:'MTc2MDUwMzMzNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98ed290b748340cc',t:'MTc2MDUwODY5OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
