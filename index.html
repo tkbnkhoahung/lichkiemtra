@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch Thi Học Sinh</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .exam-card {
+            transition: all 0.3s ease;
+        }
+        .exam-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .notice-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 4px solid #f59e0b;
+        }
+        @media (max-width: 768px) {
+            .mobile-responsive {
+                padding: 0.75rem;
+            }
+            .mobile-card {
+                margin-bottom: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-full">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-indigo-800 mb-2">🏫 Trường THPT Nguyễn Khuyến</h1>
+            <h2 class="text-xl md:text-2xl font-semibold text-indigo-700 mb-2">LỊCH KIỂM TRA GIỮA HỌC KÌ I</h2>
+            <p class="text-lg text-indigo-600 font-medium mb-4">NĂM HỌC 2025-2026</p>
+            <div class="flex justify-center">
+                <a href="https://tkbnkhoahung.github.io/tkbnk2526hs/" target="_blank" rel="noopener noreferrer" 
+                   class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg font-bold text-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                    🏠 Trang Chủ
+                </a>
+            </div>
+        </div>
+
+        <!-- Block Selection -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-xl font-semibold text-indigo-800 mb-4">🎯 Chọn khối học</h2>
+            <div class="flex flex-wrap gap-4 justify-center">
+                <button id="block10" class="block-btn bg-blue-100 text-blue-700 px-6 py-3 rounded-lg font-medium hover:bg-blue-200 transition-colors">
+                    🔵 Khối 10
+                </button>
+                <button id="block11" class="block-btn bg-green-100 text-green-700 px-6 py-3 rounded-lg font-medium hover:bg-green-200 transition-colors">
+                    🟢 Khối 11
+                </button>
+                <button id="block12" class="block-btn bg-purple-100 text-purple-700 px-6 py-3 rounded-lg font-medium hover:bg-purple-200 transition-colors">
+                    🟣 Khối 12
+                </button>
+            </div>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-xl font-semibold text-indigo-800 mb-4">🔍 Bộ lọc</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-blue-700 mb-2">Buổi</label>
+                    <select id="sessionFilter" class="w-full px-3 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-blue-800">
+                        <option value="">Tất cả buổi</option>
+                        <option value="Sáng">Buổi sáng</option>
+                        <option value="Chiều">Buổi chiều</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-green-700 mb-2">Môn học</label>
+                    <select id="subjectFilter" class="w-full px-3 py-2 border border-green-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-green-800">
+                        <option value="">Tất cả môn</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notice Section -->
+        <div id="noticeSection" class="bg-white rounded-xl shadow-lg p-4 md:p-6 mb-8 hidden">
+            <h2 class="text-xl font-semibold text-red-700 mb-4">📢 Thông báo quan trọng</h2>
+            <div id="morningNotice" class="notice-box p-4 rounded-lg mb-4 hidden">
+                <h3 class="font-semibold text-amber-800 mb-2">🌅 Buổi thi sáng</h3>
+                <div class="text-sm text-amber-700 space-y-1">
+                    <p><strong class="text-red-600">Ghi chú:</strong></p>
+                    <p>• HS đến sau giờ phát đề 5 phút không được vào phòng kiểm tra.</p>
+                    <p>• Các buổi không kiểm tra HS được nghỉ.</p>
+                    <p>• <strong class="text-red-600">Học sinh có mặt: buổi sáng 7h00'.</strong></p>
+                </div>
+            </div>
+            <div id="afternoonNotice" class="notice-box p-4 rounded-lg hidden">
+                <h3 class="font-semibold text-amber-800 mb-2">🌆 Buổi thi chiều</h3>
+                <div class="text-sm text-amber-700 space-y-1">
+                    <p><strong class="text-red-600">Ghi chú:</strong></p>
+                    <p>• HS đến sau giờ phát đề 5 phút không được vào phòng kiểm tra.</p>
+                    <p>• Các buổi không kiểm tra HS được nghỉ.</p>
+                    <p>• <strong class="text-red-600">Học sinh có mặt: buổi chiều 13h00'.</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Block Statistics -->
+        <div id="blockStats" class="bg-white rounded-xl shadow-lg p-4 md:p-6 mb-8 hidden">
+            <h2 class="text-xl font-semibold text-purple-700 mb-4">📈 Thống kê khối được chọn</h2>
+            <div id="selectedBlockStat" class="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+                <h4 class="font-semibold text-indigo-800 mb-2" id="selectedBlockTitle">Chọn một khối để xem thống kê</h4>
+                <div class="text-sm text-indigo-700 space-y-1" id="selectedBlockInfo">
+                    <p>Vui lòng chọn khối học để xem thông tin chi tiết</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exam Schedule Display -->
+        <div class="bg-white rounded-xl shadow-lg p-4 md:p-6 mobile-responsive">
+            <h2 class="text-xl font-semibold text-teal-700 mb-4">📅 Lịch Thi</h2>
+            <div id="examSchedule" class="space-y-4">
+                <div class="text-center text-blue-600 py-8">
+                    <div class="text-6xl mb-4">📋</div>
+                    <p>Vui lòng chọn khối học để xem lịch thi</p>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <script>
+        let examData = [
+            {day: 'Thứ ba', date: '28/10/2025', block: '10', session: 'Sáng', subject: 'Văn', startTime: '07:30', endTime: '09:00', duration: 90},
+            {day: 'Thứ năm', date: '30/10/2025', block: '10', session: 'Sáng', subject: 'Toán', startTime: '07:30', endTime: '08:20', duration: 50},
+            {day: 'Thứ bảy', date: '01/11/2025', block: '10', session: 'Sáng', subject: 'Anh', startTime: '07:30', endTime: '08:20', duration: 50},
+            {day: 'Thứ ba', date: '28/10/2025', block: '10', session: 'Sáng', subject: 'Lý', startTime: '09:45', endTime: '10:35', duration: 50},
+            {day: 'Thứ năm', date: '30/10/2025', block: '10', session: 'Sáng', subject: 'Sinh', startTime: '09:05', endTime: '09:55', duration: 50},
+            {day: 'Thứ bảy', date: '01/11/2025', block: '10', session: 'Sáng', subject: 'Hóa', startTime: '09:05', endTime: '09:55', duration: 50},
+            {day: 'Thứ ba', date: '28/10/2025', block: '10', session: 'Sáng', subject: 'GDKT và PL', startTime: '09:45', endTime: '10:35', duration: 50},
+            {day: 'Thứ năm', date: '30/10/2025', block: '10', session: 'Sáng', subject: 'Địa', startTime: '09:05', endTime: '09:55', duration: 50},
+            {day: 'Thứ bảy', date: '01/11/2025', block: '10', session: 'Sáng', subject: 'Sử', startTime: '09:05', endTime: '09:55', duration: 50},
+            {day: 'Thứ hai', date: '27/10/2025', block: '11', session: 'Chiều', subject: 'Văn', startTime: '13:30', endTime: '15:00', duration: 90},
+            {day: 'Thứ tư', date: '29/10/2025', block: '11', session: 'Chiều', subject: 'Toán', startTime: '13:30', endTime: '14:20', duration: 50},
+            {day: 'Thứ sáu', date: '31/10/2025', block: '11', session: 'Chiều', subject: 'Hóa', startTime: '13:30', endTime: '14:20', duration: 50},
+            {day: 'Thứ sáu', date: '31/10/2025', block: '11', session: 'Chiều', subject: 'GDKT và PL', startTime: '13:30', endTime: '14:20', duration: 50},
+            {day: 'Thứ hai', date: '27/10/2025', block: '11', session: 'Chiều', subject: 'Lý', startTime: '15:45', endTime: '16:35', duration: 50},
+            {day: 'Thứ tư', date: '29/10/2025', block: '11', session: 'Chiều', subject: 'Sinh', startTime: '15:05', endTime: '15:55', duration: 50},
+            {day: 'Thứ sáu', date: '31/10/2025', block: '11', session: 'Chiều', subject: 'Anh', startTime: '15:05', endTime: '15:55', duration: 50},
+            {day: 'Thứ hai', date: '27/10/2025', block: '11', session: 'Chiều', subject: 'Địa', startTime: '15:45', endTime: '16:35', duration: 50},
+            {day: 'Thứ tư', date: '29/10/2025', block: '11', session: 'Chiều', subject: 'Sử', startTime: '15:05', endTime: '15:55', duration: 50},
+            {day: 'Thứ hai', date: '27/10/2025', block: '12', session: 'Sáng', subject: 'Văn', startTime: '07:30', endTime: '09:00', duration: 90},
+            {day: 'Thứ tư', date: '29/10/2025', block: '12', session: 'Sáng', subject: 'Toán', startTime: '07:30', endTime: '08:20', duration: 50},
+            {day: 'Thứ sáu', date: '31/10/2025', block: '12', session: 'Sáng', subject: 'Lý', startTime: '07:30', endTime: '08:20', duration: 50},
+            {day: 'Thứ hai', date: '27/10/2025', block: '12', session: 'Sáng', subject: 'Anh', startTime: '09:45', endTime: '10:35', duration: 50},
+            {day: 'Thứ tư', date: '29/10/2025', block: '12', session: 'Sáng', subject: 'Sinh', startTime: '09:05', endTime: '09:55', duration: 50},
+            {day: 'Thứ sáu', date: '31/10/2025', block: '12', session: 'Sáng', subject: 'Hóa', startTime: '09:05', endTime: '09:55', duration: 50},
+            {day: 'Thứ tư', date: '29/10/2025', block: '12', session: 'Sáng', subject: 'Địa', startTime: '09:05', endTime: '09:55', duration: 50},
+            {day: 'Thứ sáu', date: '31/10/2025', block: '12', session: 'Sáng', subject: 'Sử', startTime: '09:05', endTime: '09:55', duration: 50}
+        ];
+        let filteredData = [];
+        let selectedBlock = '';
+
+
+
+        // Sort exam data by day of week, then date and time
+        function sortExamData() {
+            const dayOrder = {
+                'Thứ hai': 1, 'Thứ ba': 2, 'Thứ tư': 3, 'Thứ năm': 4, 
+                'Thứ sáu': 5, 'Thứ bảy': 6, 'Chủ nhật': 7
+            };
+
+            examData.sort((a, b) => {
+                // First sort by date
+                const dateA = new Date(a.date.split('/').reverse().join('-'));
+                const dateB = new Date(b.date.split('/').reverse().join('-'));
+                
+                if (dateA.getTime() !== dateB.getTime()) {
+                    return dateA - dateB;
+                }
+                
+                // Then sort by day of week
+                const dayA = dayOrder[a.day] || 8;
+                const dayB = dayOrder[b.day] || 8;
+                
+                if (dayA !== dayB) {
+                    return dayA - dayB;
+                }
+                
+                // Then sort by session (Sáng before Chiều)
+                if (a.session !== b.session) {
+                    return a.session === 'Sáng' ? -1 : 1;
+                }
+                
+                // Finally sort by start time
+                const timeA = a.startTime.split(':').map(Number);
+                const timeB = b.startTime.split(':').map(Number);
+                const minutesA = timeA[0] * 60 + timeA[1];
+                const minutesB = timeB[0] * 60 + timeB[1];
+                
+                return minutesA - minutesB;
+            });
+        }
+
+        // Populate filter dropdowns
+        function populateFilters() {
+            const subjects = [...new Set(examData.map(exam => exam.subject))];
+            const subjectFilter = document.getElementById('subjectFilter');
+            
+            // Clear existing options except "Tất cả môn"
+            subjectFilter.innerHTML = '<option value="">Tất cả môn</option>';
+            
+            subjects.forEach(subject => {
+                const option = document.createElement('option');
+                option.value = subject;
+                option.textContent = subject;
+                subjectFilter.appendChild(option);
+            });
+        }
+
+        // Update statistics for selected block
+        function updateSelectedBlockStats() {
+            if (!selectedBlock) {
+                document.getElementById('selectedBlockTitle').textContent = 'Chọn một khối để xem thống kê';
+                document.getElementById('selectedBlockInfo').innerHTML = '<p>Vui lòng chọn khối học để xem thông tin chi tiết</p>';
+                return;
+            }
+
+            const blockExams = examData.filter(exam => exam.block === selectedBlock);
+            const uniqueDates = [...new Set(blockExams.map(exam => exam.date))];
+            const uniqueDays = [...new Set(blockExams.map(exam => exam.day))];
+            const morningExams = blockExams.filter(exam => exam.session === 'Sáng').length;
+            const afternoonExams = blockExams.filter(exam => exam.session === 'Chiều').length;
+
+
+            const blockColors = {
+                '10': { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-800', icon: '🔵' },
+                '11': { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-800', icon: '🟢' },
+                '12': { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-800', icon: '🟣' }
+            };
+
+            const color = blockColors[selectedBlock];
+            const statDiv = document.getElementById('selectedBlockStat');
+            statDiv.className = `${color.bg} ${color.border} border rounded-lg p-4`;
+
+            document.getElementById('selectedBlockTitle').textContent = `${color.icon} Khối ${selectedBlock}`;
+            document.getElementById('selectedBlockTitle').className = `font-semibold ${color.text} mb-2`;
+            
+            document.getElementById('selectedBlockInfo').innerHTML = `
+                <div class="text-sm ${color.text.replace('800', '700')} space-y-1">
+                    <p>Số môn thi: <span class="font-medium text-red-600">${blockExams.length}</span></p>
+                    <p>Số ngày thi: <span class="font-medium text-red-600">${uniqueDates.length}</span></p>
+                    <p>Các ngày: <span class="font-medium text-red-600">${uniqueDays.length > 0 ? uniqueDays.join(', ') : '-'}</span></p>
+                    <p>Thi buổi sáng: <span class="font-medium text-red-600">${morningExams}</span></p>
+                    <p>Thi buổi chiều: <span class="font-medium text-red-600">${afternoonExams}</span></p>
+
+                </div>
+            `;
+        }
+
+        // Filter data
+        function filterData() {
+            const sessionFilter = document.getElementById('sessionFilter').value;
+            const subjectFilter = document.getElementById('subjectFilter').value;
+
+            filteredData = examData.filter(exam => {
+                return (!selectedBlock || exam.block === selectedBlock) &&
+                       (!sessionFilter || exam.session === sessionFilter) &&
+                       (!subjectFilter || exam.subject === subjectFilter);
+            });
+
+            updateNotices();
+            displayExams();
+        }
+
+        // Update notices based on filtered data
+        function updateNotices() {
+            const dataToShow = filteredData.length > 0 ? filteredData : examData;
+            const hasMorning = dataToShow.some(exam => exam.session === 'Sáng');
+            const hasAfternoon = dataToShow.some(exam => exam.session === 'Chiều');
+
+            const noticeSection = document.getElementById('noticeSection');
+            const morningNotice = document.getElementById('morningNotice');
+            const afternoonNotice = document.getElementById('afternoonNotice');
+
+            if (hasMorning || hasAfternoon) {
+                noticeSection.classList.remove('hidden');
+                morningNotice.classList.toggle('hidden', !hasMorning);
+                afternoonNotice.classList.toggle('hidden', !hasAfternoon);
+            } else {
+                noticeSection.classList.add('hidden');
+            }
+        }
+
+        // Block selection handlers
+        function selectBlock(block) {
+            selectedBlock = block;
+            
+            // Update button styles
+            document.querySelectorAll('.block-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'bg-green-600', 'bg-purple-600', 'text-white');
+                btn.classList.add('bg-orange-100', 'text-orange-700');
+            });
+            
+            const activeBtn = document.getElementById(`block${block}`);
+            activeBtn.classList.remove('bg-orange-100', 'text-orange-700');
+            
+            if (block === '10') {
+                activeBtn.classList.add('bg-blue-600', 'text-white');
+            } else if (block === '11') {
+                activeBtn.classList.add('bg-green-600', 'text-white');
+            } else if (block === '12') {
+                activeBtn.classList.add('bg-purple-600', 'text-white');
+            }
+            
+            updateSelectedBlockStats();
+            filterData();
+        }
+
+        // Display exams
+        function displayExams() {
+            const container = document.getElementById('examSchedule');
+            const dataToShow = filteredData.length > 0 ? filteredData : examData;
+
+            if (dataToShow.length === 0) {
+                if (!selectedBlock) {
+                    container.innerHTML = `
+                        <div class="text-center text-blue-600 py-8">
+                            <div class="text-6xl mb-4">🎯</div>
+                            <p>Vui lòng chọn khối học để xem lịch thi</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div class="text-center text-red-600 py-8">
+                            <div class="text-6xl mb-4">🔍</div>
+                            <p>Không tìm thấy lịch thi phù hợp với bộ lọc</p>
+                        </div>
+                    `;
+                }
+                return;
+            }
+
+            // Group by date and sort by day of week order
+            const groupedByDate = {};
+            dataToShow.forEach(exam => {
+                if (!groupedByDate[exam.date]) {
+                    groupedByDate[exam.date] = [];
+                }
+                groupedByDate[exam.date].push(exam);
+            });
+
+            // Sort dates by day of week order
+            const dayOrder = {
+                'Thứ hai': 1, 'Thứ ba': 2, 'Thứ tư': 3, 'Thứ năm': 4, 
+                'Thứ sáu': 5, 'Thứ bảy': 6, 'Chủ nhật': 7
+            };
+
+            const sortedDates = Object.keys(groupedByDate).sort((a, b) => {
+                const dateA = new Date(a.split('/').reverse().join('-'));
+                const dateB = new Date(b.split('/').reverse().join('-'));
+                
+                if (dateA.getTime() !== dateB.getTime()) {
+                    return dateA - dateB;
+                }
+                
+                const dayA = dayOrder[groupedByDate[a][0].day] || 8;
+                const dayB = dayOrder[groupedByDate[b][0].day] || 8;
+                return dayA - dayB;
+            });
+
+            let html = '';
+            sortedDates.forEach(date => {
+                const exams = groupedByDate[date];
+                // Sort exams within the same date
+                exams.sort((a, b) => {
+                    if (a.session !== b.session) {
+                        return a.session === 'Sáng' ? -1 : 1;
+                    }
+                    const timeA = a.startTime.split(':').map(Number);
+                    const timeB = b.startTime.split(':').map(Number);
+                    const minutesA = timeA[0] * 60 + timeA[1];
+                    const minutesB = timeB[0] * 60 + timeB[1];
+                    return minutesA - minutesB;
+                });
+
+                html += `
+                    <div class="fade-in mobile-card">
+                        <h3 class="text-lg font-semibold text-indigo-700 mb-3 border-b border-indigo-200 pb-2">
+                            📅 ${exams[0].day}, ${date}
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 mb-6">
+                `;
+
+                exams.forEach(exam => {
+                    const sessionIcon = exam.session === 'Sáng' ? '🌅' : '🌆';
+                    const blockColor = exam.block === '10' ? 'bg-blue-50 border-blue-200' : 
+                                      exam.block === '11' ? 'bg-green-50 border-green-200' : 
+                                      'bg-purple-50 border-purple-200';
+                    
+                    html += `
+                        <div class="exam-card ${blockColor} border-2 rounded-lg p-4 md:p-5">
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="text-lg font-bold text-purple-700">Khối ${exam.block}</span>
+                                <span class="text-sm bg-orange-200 text-orange-800 px-3 py-1 rounded-full font-bold">${exam.duration} phút</span>
+                            </div>
+                            <h4 class="font-bold text-blue-800 mb-3 text-lg md:text-xl">${exam.subject}</h4>
+                            <div class="text-base text-teal-700 space-y-2 font-semibold">
+                                <div class="flex items-center">
+                                    ${sessionIcon} <span class="ml-2">${exam.session}</span>
+                                </div>
+                                <div class="flex items-center">
+                                    ⏰ <span class="ml-2">${exam.startTime} - ${exam.endTime}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += '</div></div>';
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Add event listeners for filters
+        document.getElementById('sessionFilter').addEventListener('change', filterData);
+        document.getElementById('subjectFilter').addEventListener('change', filterData);
+        
+        // Add event listeners for block buttons
+        document.getElementById('block10').addEventListener('click', () => selectBlock('10'));
+        document.getElementById('block11').addEventListener('click', () => selectBlock('11'));
+        document.getElementById('block12').addEventListener('click', () => selectBlock('12'));
+
+        // Initialize with sample data
+        function initializeSampleData() {
+            sortExamData();
+            populateFilters();
+            updateSelectedBlockStats();
+            updateNotices();
+            displayExams();
+            document.getElementById('blockStats').classList.remove('hidden');
+            
+
+        }
+
+        // Initialize on page load
+        initializeSampleData();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98ec973884eafd84',t:'MTc2MDUwMjcyNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
