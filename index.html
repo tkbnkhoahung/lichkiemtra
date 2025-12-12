@@ -3,30 +3,55 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lịch Kiểm Tra Học Kì I</title>
+  <title>Lịch Kiểm Tra Học Kỳ I</title>
   <script src="/_sdk/element_sdk.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
   <style>
     body {
       box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
     }
     
-    .exam-card {
+    .subject-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .subject-card:hover {
+      transform: translateY(-4px) scale(1.02);
+    }
+    
+    .grade-selector {
       transition: all 0.3s ease;
     }
     
-    .exam-card:hover {
+    .grade-selector:hover:not(.active) {
       transform: translateY(-2px);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
     }
     
-    .grade-tab {
+    .filter-chip {
       transition: all 0.2s ease;
     }
     
-    .grade-tab:hover {
+    .filter-chip:hover {
       transform: scale(1.05);
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .animate-slide-in {
+      animation: slideIn 0.5s ease-out forwards;
     }
   </style>
   <style>@view-transition { navigation: auto; }</style>
@@ -35,283 +60,287 @@
  <body class="h-full">
   <div id="app" class="w-full h-full overflow-auto"></div>
   <script>
-    const examData = [
-      // ===== KHỐI 10 – SÁNG =====
-      { day: 'Thứ ba', date: '16/12/2025', block: '10', session: 'Sáng', subject: 'Văn', startTime: '07:30', endTime: '09:00', duration: 90 },
-      { day: 'Thứ ba', date: '16/12/2025', block: '10', session: 'Sáng', subject: 'Lý', startTime: '09:45', endTime: '10:30', duration: 45 },
-      { day: 'Thứ ba', date: '16/12/2025', block: '10', session: 'Sáng', subject: 'Địa', startTime: '09:45', endTime: '10:30', duration: 45 },
-      { day: 'Thứ ba', date: '16/12/2025', block: '10', session: 'Sáng', subject: 'Sinh', startTime: '09:45', endTime: '10:30', duration: 45 },
-      { day: 'Thứ năm', date: '18/12/2025', block: '10', session: 'Sáng', subject: 'Toán', startTime: '07:30', endTime: '09:00', duration: 90 },
-      { day: 'Thứ năm', date: '18/12/2025', block: '10', session: 'Sáng', subject: 'Anh', startTime: '09:45', endTime: '10:45', duration: 60 },
-      { day: 'Thứ năm', date: '18/12/2025', block: '10', session: 'Sáng', subject: 'GDKT&PL', startTime: '09:45', endTime: '10:30', duration: 45 },
-      { day: 'Thứ sáu', date: '19/12/2025', block: '10', session: 'Sáng', subject: 'Hóa', startTime: '09:15', endTime: '10:00', duration: 45 },
-      { day: 'Thứ sáu', date: '19/12/2025', block: '10', session: 'Sáng', subject: 'Sử', startTime: '09:15', endTime: '10:00', duration: 45 },
+    const examSchedule = [
+      // KHỐI 10 - BUỔI SÁNG
+      { weekday: 'Thứ Ba', date: '16/12/2025', grade: '10', period: 'Sáng', subject: 'Ngữ Văn', start: '07:30', end: '09:00', minutes: 90 },
+      { weekday: 'Thứ Ba', date: '16/12/2025', grade: '10', period: 'Sáng', subject: 'Vật Lý', start: '09:45', end: '10:30', minutes: 45 },
+      { weekday: 'Thứ Ba', date: '16/12/2025', grade: '10', period: 'Sáng', subject: 'Địa Lý', start: '09:45', end: '10:30', minutes: 45 },
+      { weekday: 'Thứ Ba', date: '16/12/2025', grade: '10', period: 'Sáng', subject: 'Sinh Học', start: '09:45', end: '10:30', minutes: 45 },
+      { weekday: 'Thứ Năm', date: '18/12/2025', grade: '10', period: 'Sáng', subject: 'Toán Học', start: '07:30', end: '09:00', minutes: 90 },
+      { weekday: 'Thứ Năm', date: '18/12/2025', grade: '10', period: 'Sáng', subject: 'Tiếng Anh', start: '09:45', end: '10:45', minutes: 60 },
+      { weekday: 'Thứ Năm', date: '18/12/2025', grade: '10', period: 'Sáng', subject: 'GDKT&PL', start: '09:45', end: '10:30', minutes: 45 },
+      { weekday: 'Thứ Sáu', date: '19/12/2025', grade: '10', period: 'Sáng', subject: 'Hóa Học', start: '09:15', end: '10:00', minutes: 45 },
+      { weekday: 'Thứ Sáu', date: '19/12/2025', grade: '10', period: 'Sáng', subject: 'Lịch Sử', start: '09:15', end: '10:00', minutes: 45 },
 
-      // ===== KHỐI 11 – CHIỀU =====
-      { day: 'Thứ hai', date: '15/12/2025', block: '11', session: 'Chiều', subject: 'Văn', startTime: '13:30', endTime: '15:00', duration: 90 },
-      { day: 'Thứ hai', date: '15/12/2025', block: '11', session: 'Chiều', subject: 'Lý', startTime: '15:45', endTime: '16:30', duration: 45 },
-      { day: 'Thứ hai', date: '15/12/2025', block: '11', session: 'Chiều', subject: 'Địa', startTime: '15:45', endTime: '16:30', duration: 45 },
-      { day: 'Thứ tư', date: '17/12/2025', block: '11', session: 'Chiều', subject: 'Toán', startTime: '13:30', endTime: '15:00', duration: 90 },
-      { day: 'Thứ tư', date: '17/12/2025', block: '11', session: 'Chiều', subject: 'Sinh', startTime: '15:45', endTime: '16:30', duration: 45 },
-      { day: 'Thứ tư', date: '17/12/2025', block: '11', session: 'Chiều', subject: 'Sử', startTime: '15:45', endTime: '16:30', duration: 45 },
-      { day: 'Thứ sáu', date: '19/12/2025', block: '11', session: 'Chiều', subject: 'Anh', startTime: '13:30', endTime: '14:30', duration: 60 },
-      { day: 'Thứ sáu', date: '19/12/2025', block: '11', session: 'Chiều', subject: 'Hóa', startTime: '15:15', endTime: '16:00', duration: 45 },
-      { day: 'Thứ sáu', date: '19/12/2025', block: '11', session: 'Chiều', subject: 'GDKT&PL', startTime: '15:15', endTime: '16:00', duration: 45 },
+      // KHỐI 11 - BUỔI CHIỀU
+      { weekday: 'Thứ Hai', date: '15/12/2025', grade: '11', period: 'Chiều', subject: 'Ngữ Văn', start: '13:30', end: '15:00', minutes: 90 },
+      { weekday: 'Thứ Hai', date: '15/12/2025', grade: '11', period: 'Chiều', subject: 'Vật Lý', start: '15:45', end: '16:30', minutes: 45 },
+      { weekday: 'Thứ Hai', date: '15/12/2025', grade: '11', period: 'Chiều', subject: 'Địa Lý', start: '15:45', end: '16:30', minutes: 45 },
+      { weekday: 'Thứ Tư', date: '17/12/2025', grade: '11', period: 'Chiều', subject: 'Toán Học', start: '13:30', end: '15:00', minutes: 90 },
+      { weekday: 'Thứ Tư', date: '17/12/2025', grade: '11', period: 'Chiều', subject: 'Sinh Học', start: '15:45', end: '16:30', minutes: 45 },
+      { weekday: 'Thứ Tư', date: '17/12/2025', grade: '11', period: 'Chiều', subject: 'Lịch Sử', start: '15:45', end: '16:30', minutes: 45 },
+      { weekday: 'Thứ Sáu', date: '19/12/2025', grade: '11', period: 'Chiều', subject: 'Tiếng Anh', start: '13:30', end: '14:30', minutes: 60 },
+      { weekday: 'Thứ Sáu', date: '19/12/2025', grade: '11', period: 'Chiều', subject: 'Hóa Học', start: '15:15', end: '16:00', minutes: 45 },
+      { weekday: 'Thứ Sáu', date: '19/12/2025', grade: '11', period: 'Chiều', subject: 'GDKT&PL', start: '15:15', end: '16:00', minutes: 45 },
 
-      // ===== KHỐI 12 – SÁNG =====
-      { day: 'Thứ hai', date: '15/12/2025', block: '12', session: 'Sáng', subject: 'Văn', startTime: '07:30', endTime: '09:00', duration: 90 },
-      { day: 'Thứ hai', date: '15/12/2025', block: '12', session: 'Sáng', subject: 'Hóa', startTime: '09:45', endTime: '10:30', duration: 45 },
-      { day: 'Thứ hai', date: '15/12/2025', block: '12', session: 'Sáng', subject: 'Sử', startTime: '09:45', endTime: '10:30', duration: 45 },
-      { day: 'Thứ tư', date: '17/12/2025', block: '12', session: 'Sáng', subject: 'Toán', startTime: '07:30', endTime: '09:00', duration: 90 },
-      { day: 'Thứ tư', date: '17/12/2025', block: '12', session: 'Sáng', subject: 'Sinh', startTime: '09:45', endTime: '10:30', duration: 45 },
-      { day: 'Thứ tư', date: '17/12/2025', block: '12', session: 'Sáng', subject: 'Địa', startTime: '09:45', endTime: '10:30', duration: 45 },
-      { day: 'Thứ sáu', date: '19/12/2025', block: '12', session: 'Sáng', subject: 'Anh', startTime: '07:30', endTime: '08:30', duration: 60 },
-      { day: 'Thứ sáu', date: '19/12/2025', block: '12', session: 'Sáng', subject: 'Lý', startTime: '09:15', endTime: '10:00', duration: 45 }
+      // KHỐI 12 - BUỔI SÁNG
+      { weekday: 'Thứ Hai', date: '15/12/2025', grade: '12', period: 'Sáng', subject: 'Ngữ Văn', start: '07:30', end: '09:00', minutes: 90 },
+      { weekday: 'Thứ Hai', date: '15/12/2025', grade: '12', period: 'Sáng', subject: 'Hóa Học', start: '09:45', end: '10:30', minutes: 45 },
+      { weekday: 'Thứ Hai', date: '15/12/2025', grade: '12', period: 'Sáng', subject: 'Lịch Sử', start: '09:45', end: '10:30', minutes: 45 },
+      { weekday: 'Thứ Tư', date: '17/12/2025', grade: '12', period: 'Sáng', subject: 'Toán Học', start: '07:30', end: '09:00', minutes: 90 },
+      { weekday: 'Thứ Tư', date: '17/12/2025', grade: '12', period: 'Sáng', subject: 'Sinh Học', start: '09:45', end: '10:30', minutes: 45 },
+      { weekday: 'Thứ Tư', date: '17/12/2025', grade: '12', period: 'Sáng', subject: 'Địa Lý', start: '09:45', end: '10:30', minutes: 45 },
+      { weekday: 'Thứ Sáu', date: '19/12/2025', grade: '12', period: 'Sáng', subject: 'Tiếng Anh', start: '07:30', end: '08:30', minutes: 60 },
+      { weekday: 'Thứ Sáu', date: '19/12/2025', grade: '12', period: 'Sáng', subject: 'Vật Lý', start: '09:15', end: '10:00', minutes: 45 }
     ];
 
     const defaultConfig = {
-      page_title: 'L��ch Kiểm Tra Học Kì I',
+      page_title: 'Lịch Kiểm Tra Học Kỳ I',
       subtitle: 'Năm học 2025-2026',
-      background_color: '#f0f9ff',
-      header_color: '#3b82f6',
-      card_color: '#ffffff',
-      accent_color: '#2563eb',
-      text_color: '#1e293b',
+      school_name: 'THPT Nguyễn Khuyến',
+      primary_color: '#10b981',
+      secondary_color: '#059669',
+      surface_color: '#ffffff',
+      background_color: '#f8fafc',
+      text_color: '#0f172a',
       font_family: 'Inter',
       font_size: 16
     };
 
-    let currentGrade = '10';
-    let filterByDate = 'all';
-    let filterBySession = 'all';
+    let selectedGrade = '10';
+    let selectedDate = 'all';
+    let selectedPeriod = 'all';
 
-    function getSubjectColor(subject) {
-      const colors = {
-        'Văn': '#ef4444',
-        'Toán': '#3b82f6',
-        'Anh': '#10b981',
-        'Lý': '#8b5cf6',
-        'Hóa': '#f59e0b',
-        'Sinh': '#06b6d4',
-        'Sử': '#ec4899',
-        'Địa': '#84cc16',
-        'GDKT&PL': '#6366f1'
+    function getSubjectIcon(subject) {
+      const icons = {
+        'Ngữ Văn': '📚',
+        'Toán Học': '🔢',
+        'Tiếng Anh': '🌍',
+        'Vật Lý': '⚡',
+        'Hóa Học': '🧪',
+        'Sinh Học': '🧬',
+        'Lịch Sử': '📜',
+        'Địa Lý': '🗺️',
+        'GDKT&PL': '⚖️'
       };
-      return colors[subject] || '#6b7280';
+      return icons[subject] || '📖';
     }
 
-    function groupExamsByDate(exams) {
-      const grouped = {};
+    function getSubjectGradient(subject) {
+      const gradients = {
+        'Ngữ Văn': 'linear-gradient(135deg, #f43f5e 0%, #ec4899 100%)',
+        'Toán Học': 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+        'Tiếng Anh': 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+        'Vật Lý': 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+        'Hóa Học': 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+        'Sinh Học': 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)',
+        'L���ch Sử': 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
+        'Địa Lý': 'linear-gradient(135deg, #84cc16 0%, #65a30d 100%)',
+        'GDKT&PL': 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)'
+      };
+      return gradients[subject] || 'linear-gradient(135deg, #64748b 0%, #475569 100%)';
+    }
+
+    function organizeByDateAndPeriod(exams) {
+      const organized = {};
       exams.forEach(exam => {
-        const key = `${exam.date}_${exam.session}`;
-        if (!grouped[key]) {
-          grouped[key] = {
-            day: exam.day,
+        const key = `${exam.date}_${exam.period}`;
+        if (!organized[key]) {
+          organized[key] = {
+            weekday: exam.weekday,
             date: exam.date,
-            session: exam.session,
-            exams: []
+            period: exam.period,
+            subjects: []
           };
         }
-        grouped[key].exams.push(exam);
+        organized[key].subjects.push(exam);
       });
-      return Object.values(grouped).sort((a, b) => {
-        const dateA = a.date.split('/').reverse().join('');
-        const dateB = b.date.split('/').reverse().join('');
-        if (dateA !== dateB) return dateA.localeCompare(dateB);
-        return a.session === 'Sáng' ? -1 : 1;
+      
+      return Object.values(organized).sort((a, b) => {
+        const dateCompare = a.date.split('/').reverse().join('').localeCompare(b.date.split('/').reverse().join(''));
+        if (dateCompare !== 0) return dateCompare;
+        return a.period === 'Sáng' ? -1 : 1;
       });
     }
 
     async function render() {
       const config = window.elementSdk?.config || defaultConfig;
       const customFont = config.font_family || defaultConfig.font_family;
-      const baseFontSize = config.font_size || defaultConfig.font_size;
-      const fontStack = `${customFont}, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif`;
+      const baseSize = config.font_size || defaultConfig.font_size;
+      const fontStack = `${customFont}, 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`;
 
-      let filteredExams = examData.filter(exam => exam.block === currentGrade);
+      let filteredExams = examSchedule.filter(e => e.grade === selectedGrade);
       
-      // Apply filters
-      if (filterByDate !== 'all') {
-        filteredExams = filteredExams.filter(exam => exam.date === filterByDate);
+      if (selectedDate !== 'all') {
+        filteredExams = filteredExams.filter(e => e.date === selectedDate);
       }
-      if (filterBySession !== 'all') {
-        filteredExams = filteredExams.filter(exam => exam.session === filterBySession);
+      if (selectedPeriod !== 'all') {
+        filteredExams = filteredExams.filter(e => e.period === selectedPeriod);
       }
       
-      const groupedExams = groupExamsByDate(filteredExams);
-      
-      // Get unique dates for filter dropdown
-      const uniqueDates = [...new Set(examData.filter(exam => exam.block === currentGrade).map(exam => exam.date))].sort((a, b) => {
-        const dateA = a.split('/').reverse().join('');
-        const dateB = b.split('/').reverse().join('');
-        return dateA.localeCompare(dateB);
+      const organized = organizeByDateAndPeriod(filteredExams);
+      const uniqueDates = [...new Set(examSchedule.filter(e => e.grade === selectedGrade).map(e => e.date))].sort((a, b) => {
+        return a.split('/').reverse().join('').localeCompare(b.split('/').reverse().join(''));
       });
 
       document.getElementById('app').innerHTML = `
-        <div style="background-color: ${config.background_color || defaultConfig.background_color}; min-height: 100%; font-family: ${fontStack};">
-          <header style="background: linear-gradient(135deg, ${config.header_color || defaultConfig.header_color} 0%, #06b6d4 100%); color: white; padding: 48px 24px; text-align: center; border-radius: 0 0 32px 32px; box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2); position: relative;">
-            <a href="https://tkbnkhoahung.github.io/tkbnk2526hs/" target="_blank" rel="noopener noreferrer" style="position: absolute; top: 24px; left: 24px; background: rgba(255, 255, 255, 0.2); color: white; padding: 10px 20px; border-radius: 12px; font-weight: 600; font-size: ${baseFontSize * 0.875}px; text-decoration: none; border: 2px solid rgba(255, 255, 255, 0.3); transition: all 0.2s; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 8px;">
-              <span style="font-size: ${baseFontSize * 1.25}px;">🏠</span>
-              <span>Trang chủ</span>
-            </a>
-            <h1 style="font-size: ${baseFontSize * 1.75}px; font-weight: 700; margin: 0 0 8px 0; letter-spacing: -0.5px;">${config.page_title || defaultConfig.page_title}</h1>
-            <p style="font-size: ${baseFontSize}px; margin: 0; opacity: 0.95; font-weight: 500;">${config.subtitle || defaultConfig.subtitle}</p>
-          </header>
-
-          <div style="max-width: 1200px; margin: 0 auto; padding: 24px;">
-            <div style="display: flex; justify-content: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
-              <button class="grade-tab" data-grade="10" style="background: ${currentGrade === '10' ? `linear-gradient(135deg, ${config.accent_color || defaultConfig.accent_color} 0%, #06b6d4 100%)` : (config.card_color || defaultConfig.card_color)}; color: ${currentGrade === '10' ? 'white' : (config.text_color || defaultConfig.text_color)}; padding: 10px 28px; border-radius: 12px; font-weight: 600; font-size: ${baseFontSize * 0.95}px; border: ${currentGrade === '10' ? 'none' : '2px solid #e2e8f0'}; cursor: pointer; box-shadow: ${currentGrade === '10' ? '0 4px 12px rgba(37, 99, 235, 0.3)' : '0 2px 6px rgba(0,0,0,0.05)'}; transition: all 0.2s;">
-                Khối 10
-              </button>
-              <button class="grade-tab" data-grade="11" style="background: ${currentGrade === '11' ? `linear-gradient(135deg, ${config.accent_color || defaultConfig.accent_color} 0%, #06b6d4 100%)` : (config.card_color || defaultConfig.card_color)}; color: ${currentGrade === '11' ? 'white' : (config.text_color || defaultConfig.text_color)}; padding: 10px 28px; border-radius: 12px; font-weight: 600; font-size: ${baseFontSize * 0.95}px; border: ${currentGrade === '11' ? 'none' : '2px solid #e2e8f0'}; cursor: pointer; box-shadow: ${currentGrade === '11' ? '0 4px 12px rgba(37, 99, 235, 0.3)' : '0 2px 6px rgba(0,0,0,0.05)'}; transition: all 0.2s;">
-                Khối 11
-              </button>
-              <button class="grade-tab" data-grade="12" style="background: ${currentGrade === '12' ? `linear-gradient(135deg, ${config.accent_color || defaultConfig.accent_color} 0%, #06b6d4 100%)` : (config.card_color || defaultConfig.card_color)}; color: ${currentGrade === '12' ? 'white' : (config.text_color || defaultConfig.text_color)}; padding: 10px 28px; border-radius: 12px; font-weight: 600; font-size: ${baseFontSize * 0.95}px; border: ${currentGrade === '12' ? 'none' : '2px solid #e2e8f0'}; cursor: pointer; box-shadow: ${currentGrade === '12' ? '0 4px 12px rgba(37, 99, 235, 0.3)' : '0 2px 6px rgba(0,0,0,0.05)'}; transition: all 0.2s;">
-                Khối 12
-              </button>
-            </div>
-
-            <div style="display: flex; justify-content: center; margin-bottom: 24px;">
-              <button id="exportBtn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 10px 24px; border-radius: 12px; font-weight: 700; font-size: ${baseFontSize * 0.95}px; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); transition: all 0.2s; display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: ${baseFontSize * 1.25}px;">📸</span>
-                <span>Xuất hình nền Khối ${currentGrade}</span>
-              </button>
-            </div>
-
-            <!-- Filter Section -->
-            <div style="background: ${config.card_color || defaultConfig.card_color}; border-radius: 16px; padding: 16px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
-              <h3 style="font-size: ${baseFontSize}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin: 0 0 12px 0;">🔍 Bộ lọc</h3>
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;">
-                <div>
-                  <label style="display: block; font-size: ${baseFontSize * 0.8}px; font-weight: 600; color: #64748b; margin-bottom: 6px;">Ngày thi</label>
-                  <select id="dateFilter" style="width: 100%; padding: 8px 12px; border-radius: 10px; border: 2px solid #e2e8f0; font-size: ${baseFontSize * 0.875}px; color: ${config.text_color || defaultConfig.text_color}; background: white; cursor: pointer; font-family: ${fontStack};">
-                    <option value="all">Tất cả ngày</option>
-                    ${uniqueDates.map(date => `<option value="${date}" ${filterByDate === date ? 'selected' : ''}>${date}</option>`).join('')}
-                  </select>
+        <div style="background: ${config.background_color || defaultConfig.background_color}; min-height: 100%; font-family: ${fontStack};">
+          
+          <!-- Hero Header -->
+          <div style="background: linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, ${config.secondary_color || defaultConfig.secondary_color} 100%); padding: 40px 24px 60px; position: relative; overflow: hidden;">
+            
+            <div style="max-width: 1200px; margin: 0 auto; position: relative; z-index: 1;">
+              <a href="https://tkbnkhoahung.github.io/tkbnk2526hs/" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); color: white; padding: 10px 20px; border-radius: 12px; font-weight: 600; font-size: ${baseSize * 0.875}px; text-decoration: none; border: 2px solid rgba(255, 255, 255, 0.3); transition: all 0.2s; margin-bottom: 24px;">
+                <span style="font-size: ${baseSize * 1.2}px;">🏠</span>
+                <span>Trang Chủ</span>
+              </a>
+              
+              <div style="text-align: center; color: white;">
+                <div style="display: inline-block; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); padding: 6px 16px; border-radius: 20px; font-size: ${baseSize * 0.85}px; font-weight: 600; margin-bottom: 16px; border: 1px solid rgba(255, 255, 255, 0.3);">
+                  ${config.school_name || defaultConfig.school_name}
                 </div>
-                <div>
-                  <label style="display: block; font-size: ${baseFontSize * 0.8}px; font-weight: 600; color: #64748b; margin-bottom: 6px;">Buổi</label>
-                  <select id="sessionFilter" style="width: 100%; padding: 8px 12px; border-radius: 10px; border: 2px solid #e2e8f0; font-size: ${baseFontSize * 0.875}px; color: ${config.text_color || defaultConfig.text_color}; background: white; cursor: pointer; font-family: ${fontStack};">
-                    <option value="all" ${filterBySession === 'all' ? 'selected' : ''}>Tất cả buổi</option>
-                    <option value="Sáng" ${filterBySession === 'Sáng' ? 'selected' : ''}>Buổi sáng</option>
-                    <option value="Chiều" ${filterBySession === 'Chiều' ? 'selected' : ''}>Buổi chiều</option>
-                  </select>
-                </div>
+                <h1 style="font-size: ${baseSize * 2.2}px; font-weight: 900; margin: 0 0 12px 0; letter-spacing: -1px; text-shadow: 0 2px 10px rgba(0,0,0,0.1);">${config.page_title || defaultConfig.page_title}</h1>
+                <p style="font-size: ${baseSize * 1.1}px; margin: 0; opacity: 0.95; font-weight: 500;">${config.subtitle || defaultConfig.subtitle}</p>
               </div>
-              <button id="clearFilters" style="margin-top: 12px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; padding: 7px 18px; border-radius: 10px; font-weight: 600; font-size: ${baseFontSize * 0.8}px; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);">
-                🗑️ Xóa bộ lọc
+            </div>
+          </div>
+
+          <div style="max-width: 1200px; margin: -40px auto 0; padding: 0 24px 40px; position: relative; z-index: 2;">
+            
+            <!-- Grade Selector Cards -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px;">
+              ${['10', '11', '12'].map(grade => `
+                <button class="grade-selector ${selectedGrade === grade ? 'active' : ''}" data-grade="${grade}" style="background: ${selectedGrade === grade ? `linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, ${config.secondary_color || defaultConfig.secondary_color} 100%)` : (config.surface_color || defaultConfig.surface_color)}; color: ${selectedGrade === grade ? 'white' : (config.text_color || defaultConfig.text_color)}; padding: 24px; border-radius: 20px; font-weight: 700; font-size: ${baseSize * 1.1}px; border: ${selectedGrade === grade ? 'none' : '2px solid #e2e8f0'}; cursor: pointer; box-shadow: ${selectedGrade === grade ? '0 10px 25px rgba(99, 102, 241, 0.3)' : '0 4px 12px rgba(0,0,0,0.05)'}; text-align: center;">
+                  <div style="font-size: ${baseSize * 2}px; margin-bottom: 8px;">🎓</div>
+                  <div>Khối ${grade}</div>
+                </button>
+              `).join('')}
+            </div>
+
+            <!-- Export Button -->
+            <div style="text-align: center; margin-bottom: 32px;">
+              <button id="exportBtn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 16px 32px; border-radius: 16px; font-weight: 700; font-size: ${baseSize}px; border: none; cursor: pointer; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); transition: all 0.3s; display: inline-flex; align-items: center; gap: 12px;">
+                <span style="font-size: ${baseSize * 1.5}px;">📱</span>
+                <span>Xuất Hình Nền Khối ${selectedGrade}</span>
               </button>
             </div>
+
+
 
             <!-- Important Notice -->
-            <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 16px; padding: 18px; margin-bottom: 24px; box-shadow: 0 3px 10px rgba(251, 191, 36, 0.3); border: 2px solid #fbbf24;">
-              <h3 style="font-size: ${baseFontSize * 1.1}px; font-weight: 800; color: #92400e; margin: 0 0 14px 0; display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: ${baseFontSize * 1.4}px;">⚠️</span>
-                LƯU Ý CHUNG
+            <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 20px; padding: 24px; margin-bottom: 32px; box-shadow: 0 4px 16px rgba(251, 191, 36, 0.2); border: 3px solid #fbbf24;">
+              <h3 style="font-size: ${baseSize * 1.2}px; font-weight: 900; color: #92400e; margin: 0 0 16px 0; display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: ${baseSize * 1.5}px;">⚠️</span>
+                LƯU Ý QUAN TRỌNG
               </h3>
-              <div style="display: grid; gap: 10px;">
-                <div style="display: flex; align-items: start; gap: 10px; background: rgba(255, 255, 255, 0.7); padding: 12px; border-radius: 10px;">
-                  <span style="font-size: ${baseFontSize * 1.2}px; flex-shrink: 0;">🕐</span>
-                  <p style="margin: 0; font-size: ${baseFontSize * 0.9}px; font-weight: 700; color: #78350f; line-height: 1.5;">
-                    Học sinh có mặt: <span style="color: #dc2626;">sáng 7h00, chiều 13h00</span>
+              
+              <div style="display: grid; gap: 12px;">
+                <div style="display: flex; align-items: start; gap: 12px; background: rgba(255, 255, 255, 0.8); padding: 16px; border-radius: 12px; border-left: 4px solid #f59e0b;">
+                  <span style="font-size: ${baseSize * 1.3}px; flex-shrink: 0;">🕐</span>
+                  <p style="margin: 0; font-size: ${baseSize * 0.95}px; font-weight: 700; color: #78350f; line-height: 1.6;">
+                    Học sinh phải có mặt: <span style="color: #dc2626;">Buổi sáng 7h00 - Buổi chiều 13h00</span>
                   </p>
                 </div>
-                <div style="display: flex; align-items: start; gap: 10px; background: rgba(255, 255, 255, 0.7); padding: 12px; border-radius: 10px;">
-                  <span style="font-size: ${baseFontSize * 1.2}px; flex-shrink: 0;">🚫</span>
-                  <p style="margin: 0; font-size: ${baseFontSize * 0.9}px; font-weight: 700; color: #78350f; line-height: 1.5;">
-                    Đến sau giờ phát đề <span style="color: #dc2626;">5 phút</span> sẽ <span style="color: #dc2626;">không được vào phòng</span> kiểm tra
+                
+                <div style="display: flex; align-items: start; gap: 12px; background: rgba(255, 255, 255, 0.8); padding: 16px; border-radius: 12px; border-left: 4px solid #ef4444;">
+                  <span style="font-size: ${baseSize * 1.3}px; flex-shrink: 0;">🚫</span>
+                  <p style="margin: 0; font-size: ${baseSize * 0.95}px; font-weight: 700; color: #78350f; line-height: 1.6;">
+                    Đến muộn sau <span style="color: #dc2626;">5 phút</span> kể từ giờ phát đề sẽ <span style="color: #dc2626;">KHÔNG được vào ph��ng thi</span>
                   </p>
                 </div>
-                <div style="display: flex; align-items: start; gap: 10px; background: rgba(255, 255, 255, 0.7); padding: 12px; border-radius: 10px;">
-                  <span style="font-size: ${baseFontSize * 1.2}px; flex-shrink: 0;">✅</span>
-                  <p style="margin: 0; font-size: ${baseFontSize * 0.9}px; font-weight: 700; color: #78350f; line-height: 1.5;">
-                    Các buổi không kiểm tra, học sinh được nghỉ
+                
+                <div style="display: flex; align-items: start; gap: 12px; background: rgba(255, 255, 255, 0.8); padding: 16px; border-radius: 12px; border-left: 4px solid #10b981;">
+                  <span style="font-size: ${baseSize * 1.3}px; flex-shrink: 0;">✅</span>
+                  <p style="margin: 0; font-size: ${baseSize * 0.95}px; font-weight: 700; color: #78350f; line-height: 1.6;">
+                    Các buổi không có lịch kiểm tra, học sinh được nghỉ học
                   </p>
                 </div>
               </div>
             </div>
 
+            <!-- Exam Schedule -->
             <div style="display: grid; gap: 24px;">
-              ${groupedExams.map(group => `
-                <div class="exam-card" style="background-color: ${config.card_color || defaultConfig.card_color}; border-radius: 16px; padding: 20px; box-shadow: 0 3px 16px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
-                  <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 18px;">
-                    <div style="width: 4px; height: 40px; background: linear-gradient(135deg, ${config.accent_color || defaultConfig.accent_color} 0%, #06b6d4 100%); border-radius: 4px;"></div>
-                    <div style="flex: 1;">
-                      <h2 style="font-size: ${baseFontSize * 1.15}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin: 0 0 6px 0; letter-spacing: -0.2px;">${group.day}, ${group.date}</h2>
-                      <span style="display: inline-block; background: linear-gradient(135deg, ${config.accent_color || defaultConfig.accent_color} 0%, #06b6d4 100%); color: white; padding: 5px 14px; border-radius: 16px; font-size: ${baseFontSize * 0.8}px; font-weight: 600;">${group.session}</span>
+              ${organized.map((session, idx) => `
+                <div class="animate-slide-in" style="animation-delay: ${idx * 0.1}s;">
+                  <div style="background: ${config.surface_color || defaultConfig.surface_color}; border-radius: 20px; padding: 24px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); border: 2px solid #e2e8f0;">
+                    
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 2px solid #e2e8f0;">
+                      <div>
+                        <h2 style="font-size: ${baseSize * 1.3}px; font-weight: 900; color: ${config.text_color || defaultConfig.text_color}; margin: 0 0 6px 0; letter-spacing: -0.5px;">
+                          ${session.weekday}, ${session.date}
+                        </h2>
+                        <span style="display: inline-block; background: linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, ${config.secondary_color || defaultConfig.secondary_color} 100%); color: white; padding: 6px 16px; border-radius: 20px; font-size: ${baseSize * 0.85}px; font-weight: 700;">
+                          ${session.period === 'Sáng' ? '🌅 Buổi Sáng' : '���� Buổi Chiều'}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div style="display: grid; gap: 14px;">
-                    ${group.exams.map(exam => `
-                      <div style="display: flex; align-items: center; padding: 16px; background: linear-gradient(135deg, ${getSubjectColor(exam.subject)}08 0%, ${getSubjectColor(exam.subject)}18 100%); border-radius: 14px; border: 2px solid ${getSubjectColor(exam.subject)}40; transition: all 0.3s;">
-                        <div style="width: 52px; height: 52px; background: ${getSubjectColor(exam.subject)}; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: ${baseFontSize * 1.3}px; font-weight: 700; color: white; margin-right: 14px; flex-shrink: 0;">
-                          ${exam.duration}'
-                        </div>
-                        <div style="flex: 1; min-width: 0;">
-                          <div style="font-size: ${baseFontSize * 1.1}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: 6px;">${exam.subject}</div>
-                          <div style="display: flex; flex-wrap: wrap; gap: 12px; font-size: ${baseFontSize * 1.05}px; color: #475569; font-weight: 600;">
-                            <span style="white-space: nowrap;">🕐 ${exam.startTime} - ${exam.endTime}</span>
-                            <span style="white-space: nowrap;">⏱ ${exam.duration} phút</span>
+                    
+                    <div style="display: grid; gap: 16px;">
+                      ${session.subjects.map(exam => `
+                        <div class="subject-card" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.9) 100%); border-radius: 16px; padding: 20px; border: 2px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                          <div style="display: flex; align-items: center; gap: 16px;">
+                            
+                            <div style="width: 70px; height: 70px; background: ${getSubjectGradient(exam.subject)}; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                              <div style="font-size: ${baseSize * 1.5}px;">${getSubjectIcon(exam.subject)}</div>
+                              <div style="font-size: ${baseSize * 0.75}px; font-weight: 800; margin-top: 4px;">${exam.minutes}'</div>
+                            </div>
+                            
+                            <div style="flex: 1; min-width: 0;">
+                              <h3 style="font-size: ${baseSize * 1.2}px; font-weight: 800; color: ${config.text_color || defaultConfig.text_color}; margin: 0 0 8px 0; letter-spacing: -0.3px;">
+                                ${exam.subject}
+                              </h3>
+                              <div style="display: flex; flex-wrap: wrap; gap: 16px; font-size: ${baseSize * 0.95}px; color: #64748b; font-weight: 600;">
+                                <span style="display: flex; align-items: center; gap: 6px;">
+                                  <span style="font-size: ${baseSize * 1.1}px;">🕐</span>
+                                  ${exam.start} - ${exam.end}
+                                </span>
+                                <span style="display: flex; align-items: center; gap: 6px;">
+                                  <span style="font-size: ${baseSize * 1.1}px;">⏱️</span>
+                                  ${exam.minutes} phút
+                                </span>
+                              </div>
+                            </div>
+                            
                           </div>
                         </div>
-                      </div>
-                    `).join('')}
+                      `).join('')}
+                    </div>
+                    
                   </div>
                 </div>
               `).join('')}
             </div>
 
-            ${groupedExams.length === 0 ? `
-              <div style="text-align: center; padding: 48px; color: #6b7280; font-size: ${baseFontSize * 1.125}px;">
-                📅 Không có lịch thi phù hợp với bộ lọc
+            ${organized.length === 0 ? `
+              <div style="text-align: center; padding: 60px 24px; background: ${config.surface_color || defaultConfig.surface_color}; border-radius: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+                <div style="font-size: ${baseSize * 3}px; margin-bottom: 16px;">📭</div>
+                <p style="color: #64748b; font-size: ${baseSize * 1.2}px; font-weight: 600; margin: 0;">
+                  Không tìm thấy lịch thi phù hợp với bộ lọc
+                </p>
               </div>
             ` : ''}
+            
           </div>
         </div>
       `;
 
-      document.querySelectorAll('.grade-tab').forEach(btn => {
+      // Event Listeners
+      document.querySelectorAll('.grade-selector').forEach(btn => {
         btn.addEventListener('click', () => {
-          currentGrade = btn.dataset.grade;
-          filterByDate = 'all';
-          filterBySession = 'all';
+          selectedGrade = btn.dataset.grade;
+          selectedDate = 'all';
+          selectedPeriod = 'all';
           render();
         });
       });
 
-      // Filter event listeners
-      const dateFilter = document.getElementById('dateFilter');
-      const sessionFilter = document.getElementById('sessionFilter');
-      const clearFiltersBtn = document.getElementById('clearFilters');
 
-      if (dateFilter) {
-        dateFilter.addEventListener('change', (e) => {
-          filterByDate = e.target.value;
-          render();
-        });
-      }
 
-      if (sessionFilter) {
-        sessionFilter.addEventListener('change', (e) => {
-          filterBySession = e.target.value;
-          render();
-        });
-      }
-
-      if (clearFiltersBtn) {
-        clearFiltersBtn.addEventListener('click', () => {
-          filterByDate = 'all';
-          filterBySession = 'all';
-          render();
-        });
-      }
-
-      // Export wallpaper functionality
+      // Export functionality
       const exportBtn = document.getElementById('exportBtn');
       if (exportBtn) {
-        exportBtn.addEventListener('click', async () => {
-          exportBtn.innerHTML = '<span style="font-size: ' + (baseFontSize * 1.5) + 'px;">��</span><span>��ang tạo hình...</span>';
+        exportBtn.addEventListener('click', () => {
+          exportBtn.innerHTML = '<span style="font-size: ' + (baseSize * 1.5) + 'px;">⏳</span><span>Đang tạo hình nền...</span>';
           exportBtn.style.pointerEvents = 'none';
           
           setTimeout(() => {
@@ -321,117 +350,109 @@
       }
 
       function createWallpaper() {
-        const gradeExams = examData.filter(exam => exam.block === currentGrade);
-        const groupedExams = groupExamsByDate(gradeExams);
+        const gradeExams = examSchedule.filter(e => e.grade === selectedGrade);
+        const organized = organizeByDateAndPeriod(gradeExams);
         
-        // Create canvas for mobile wallpaper (1080x1920)
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = 1080;
         canvas.height = 1920;
         
-        // Background gradient
+        // Background
         const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        gradient.addColorStop(0, config.header_color || defaultConfig.header_color);
-        gradient.addColorStop(1, '#06b6d4');
+        gradient.addColorStop(0, config.primary_color || defaultConfig.primary_color);
+        gradient.addColorStop(1, config.secondary_color || defaultConfig.secondary_color);
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
-        // Title section
+        // Title
         ctx.fillStyle = 'white';
-        ctx.font = 'bold 72px Arial';
+        ctx.font = 'bold 70px Inter, Arial, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText(config.page_title || defaultConfig.page_title, canvas.width / 2, 120);
+        ctx.fillText(config.page_title || defaultConfig.page_title, canvas.width / 2, 100);
         
-        ctx.font = '48px Arial';
-        ctx.fillText(config.subtitle || defaultConfig.subtitle, canvas.width / 2, 200);
+        ctx.font = '45px Inter, Arial, sans-serif';
+        ctx.fillText(config.subtitle || defaultConfig.subtitle, canvas.width / 2, 170);
         
-        ctx.font = 'bold 56px Arial';
-        ctx.fillText('KHỐI ' + currentGrade, canvas.width / 2, 280);
+        ctx.font = 'bold 55px Inter, Arial, sans-serif';
+        ctx.fillText('KHỐI ' + selectedGrade, canvas.width / 2, 250);
         
-        // Important notices box
+        // Notice box
         ctx.fillStyle = 'rgba(254, 243, 199, 0.95)';
-        ctx.fillRect(60, 340, canvas.width - 120, 280);
+        ctx.fillRect(60, 300, canvas.width - 120, 270);
         
         ctx.fillStyle = '#92400e';
-        ctx.font = 'bold 42px Arial';
+        ctx.font = 'bold 40px Inter, Arial, sans-serif';
         ctx.textAlign = 'left';
-        ctx.fillText('⚠️ LƯU Ý QUAN TRỌNG', 100, 400);
+        ctx.fillText('⚠️ LƯU Ý QUAN TRỌNG', 100, 360);
         
-        ctx.font = '32px Arial';
-        ctx.fillText('🕐 Có mặt: Sáng 7h00, Chiều 13h00', 100, 460);
-        ctx.fillText('🚫 Trễ 5 phút không được vào phòng', 100, 520);
-        ctx.fillText('✅ Buổi không thi được nghỉ', 100, 580);
+        ctx.font = '30px Inter, Arial, sans-serif';
+        ctx.fillText('🕐 Có mặt: Sáng 7h00, Chiều 13h00', 100, 420);
+        ctx.fillText('🚫 Trễ 5 phút không được vào phòng', 100, 475);
+        ctx.fillText('✅ Buổi không thi được ngh���', 100, 530);
         
-        // Draw exam schedule
-        let yPos = 680;
+        // Schedule
+        let yPos = 630;
         const cardWidth = canvas.width - 120;
         
-        groupedExams.forEach((group, index) => {
-          if (yPos > canvas.height - 200) return;
+        organized.forEach((session) => {
+          if (yPos > canvas.height - 150) return;
           
-          // Date header
+          // Session header
           ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-          ctx.fillRect(60, yPos, cardWidth, 80);
+          ctx.fillRect(60, yPos, cardWidth, 75);
           
           ctx.fillStyle = config.text_color || defaultConfig.text_color;
-          ctx.font = 'bold 40px Arial';
+          ctx.font = 'bold 38px Inter, Arial, sans-serif';
           ctx.textAlign = 'left';
-          ctx.fillText(`${group.day}, ${group.date} - ${group.session}`, 100, yPos + 52);
+          ctx.fillText(`${session.weekday}, ${session.date} - ${session.period}`, 100, yPos + 48);
           
-          yPos += 100;
+          yPos += 90;
           
-          // Exams
-          group.exams.forEach((exam, examIndex) => {
-            if (yPos > canvas.height - 100) return;
+          // Subjects
+          session.subjects.forEach((exam) => {
+            if (yPos > canvas.height - 80) return;
             
-            const subjectColor = getSubjectColor(exam.subject);
-            
-            // Exam card background
             ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-            ctx.fillRect(60, yPos, cardWidth, 90);
-            
-            // Subject color indicator
-            ctx.fillStyle = subjectColor;
-            ctx.fillRect(60, yPos, 12, 90);
+            ctx.fillRect(60, yPos, cardWidth, 85);
             
             // Subject name
             ctx.fillStyle = config.text_color || defaultConfig.text_color;
-            ctx.font = 'bold 38px Arial';
-            ctx.fillText(exam.subject, 100, yPos + 42);
+            ctx.font = 'bold 36px Inter, Arial, sans-serif';
+            ctx.fillText(`${getSubjectIcon(exam.subject)} ${exam.subject}`, 100, yPos + 40);
             
-            // Time and duration
-            ctx.font = '30px Arial';
+            // Time
+            ctx.font = '28px Inter, Arial, sans-serif';
             ctx.fillStyle = '#64748b';
-            ctx.fillText(`${exam.startTime} - ${exam.endTime} (${exam.duration}')`, 100, yPos + 75);
+            ctx.fillText(`${exam.start} - ${exam.end} (${exam.minutes} phút)`, 100, yPos + 70);
             
-            yPos += 100;
+            yPos += 95;
           });
           
           yPos += 10;
         });
         
         // Footer
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-        ctx.font = 'bold 32px Arial';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+        ctx.font = 'bold 32px Inter, Arial, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText('🏫 Chúc các em thi tốt!', canvas.width / 2, canvas.height - 60);
+        ctx.fillText('🏫 Chúc các em thi tốt!', canvas.width / 2, canvas.height - 50);
         
-        // Download image
+        // Download
         canvas.toBlob((blob) => {
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = `Lich_Thi_Khoi_${currentGrade}.png`;
+          a.download = `Lich_Thi_Khoi_${selectedGrade}.png`;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
           URL.revokeObjectURL(url);
           
           const exportBtn = document.getElementById('exportBtn');
-          exportBtn.innerHTML = '<span style="font-size: ' + (baseFontSize * 1.5) + 'px;">✅</span><span>Đã tải xuống!</span>';
+          exportBtn.innerHTML = '<span style="font-size: ' + (baseSize * 1.5) + 'px;">✅</span><span>Đã tải xuống!</span>';
           setTimeout(() => {
-            exportBtn.innerHTML = '<span style="font-size: ' + (baseFontSize * 1.5) + 'px;">📸</span><span>Xuất hình nền Khối ' + currentGrade + '</span>';
+            exportBtn.innerHTML = '<span style="font-size: ' + (baseSize * 1.5) + 'px;">📱</span><span>Xuất Hình Nền Khối ' + selectedGrade + '</span>';
             exportBtn.style.pointerEvents = 'auto';
           }, 2000);
         });
@@ -451,10 +472,10 @@
             }
           },
           {
-            get: () => config.card_color || defaultConfig.card_color,
+            get: () => config.surface_color || defaultConfig.surface_color,
             set: (value) => {
-              config.card_color = value;
-              window.elementSdk.setConfig({ card_color: value });
+              config.surface_color = value;
+              window.elementSdk.setConfig({ surface_color: value });
             }
           },
           {
@@ -465,17 +486,17 @@
             }
           },
           {
-            get: () => config.header_color || defaultConfig.header_color,
+            get: () => config.primary_color || defaultConfig.primary_color,
             set: (value) => {
-              config.header_color = value;
-              window.elementSdk.setConfig({ header_color: value });
+              config.primary_color = value;
+              window.elementSdk.setConfig({ primary_color: value });
             }
           },
           {
-            get: () => config.accent_color || defaultConfig.accent_color,
+            get: () => config.secondary_color || defaultConfig.secondary_color,
             set: (value) => {
-              config.accent_color = value;
-              window.elementSdk.setConfig({ accent_color: value });
+              config.secondary_color = value;
+              window.elementSdk.setConfig({ secondary_color: value });
             }
           }
         ],
@@ -497,7 +518,8 @@
       }),
       mapToEditPanelValues: (config) => new Map([
         ['page_title', config.page_title || defaultConfig.page_title],
-        ['subtitle', config.subtitle || defaultConfig.subtitle]
+        ['subtitle', config.subtitle || defaultConfig.subtitle],
+        ['school_name', config.school_name || defaultConfig.school_name]
       ])
     };
 
@@ -507,5 +529,5 @@
 
     render();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9aceccccc17c09c0',t:'MTc2NTU1OTA1Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9acee2a5775309c0',t:'MTc2NTU1OTk1Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
