@@ -42,7 +42,7 @@
         <!-- Header -->
         <div class="text-center mb-8">
             <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Trường THPT Nguyễn Khuyến</h1>
-            <h2 class="text-xl md:text-2xl font-semibold text-gray-700 mb-2">LỊCH KIỂM TRA GIỮA HỌC KÌ I</h2>
+            <h2 class="text-xl md:text-2xl font-semibold text-gray-700 mb-2">LỊCH KIỂM TRA HỌC KÌ I</h2>
             <p class="text-lg text-gray-600 font-medium mb-4">NĂM HỌC 2025-2026</p>
             <div class="flex justify-center">
                 <a href="https://tkbnkhoahung.github.io/tkbnk2526hs/" target="_blank" rel="noopener noreferrer" 
@@ -170,32 +170,48 @@
 
     <script>
         let examData = [
-            {day: 'Thứ ba', date: '28/10/2025', block: '10', session: 'Sáng', subject: 'Văn', startTime: '07:30', endTime: '09:00', duration: 90},
-            {day: 'Thứ năm', date: '30/10/2025', block: '10', session: 'Sáng', subject: 'Toán', startTime: '07:30', endTime: '08:20', duration: 50},
-            {day: 'Thứ bảy', date: '01/11/2025', block: '10', session: 'Sáng', subject: 'Anh', startTime: '07:30', endTime: '08:20', duration: 50},
-            {day: 'Thứ ba', date: '28/10/2025', block: '10', session: 'Sáng', subject: 'Lý', startTime: '09:45', endTime: '10:35', duration: 50},
-            {day: 'Thứ năm', date: '30/10/2025', block: '10', session: 'Sáng', subject: 'Sinh', startTime: '09:05', endTime: '09:55', duration: 50},
-            {day: 'Thứ bảy', date: '01/11/2025', block: '10', session: 'Sáng', subject: 'Hóa', startTime: '09:05', endTime: '09:55', duration: 50},
-            {day: 'Thứ ba', date: '28/10/2025', block: '10', session: 'Sáng', subject: 'GDKT và PL', startTime: '09:45', endTime: '10:35', duration: 50},
-            {day: 'Thứ năm', date: '30/10/2025', block: '10', session: 'Sáng', subject: 'Địa', startTime: '09:05', endTime: '09:55', duration: 50},
-            {day: 'Thứ bảy', date: '01/11/2025', block: '10', session: 'Sáng', subject: 'Sử', startTime: '09:05', endTime: '09:55', duration: 50},
-            {day: 'Thứ hai', date: '27/10/2025', block: '11', session: 'Chiều', subject: 'Văn', startTime: '13:30', endTime: '15:00', duration: 90},
-            {day: 'Thứ tư', date: '29/10/2025', block: '11', session: 'Chiều', subject: 'Toán', startTime: '13:30', endTime: '14:20', duration: 50},
-            {day: 'Thứ sáu', date: '31/10/2025', block: '11', session: 'Chiều', subject: 'Hóa', startTime: '13:30', endTime: '14:20', duration: 50},
-            {day: 'Thứ sáu', date: '31/10/2025', block: '11', session: 'Chiều', subject: 'GDKT và PL', startTime: '13:30', endTime: '14:20', duration: 50},
-            {day: 'Thứ hai', date: '27/10/2025', block: '11', session: 'Chiều', subject: 'Lý', startTime: '15:45', endTime: '16:35', duration: 50},
-            {day: 'Thứ tư', date: '29/10/2025', block: '11', session: 'Chiều', subject: 'Sinh', startTime: '15:05', endTime: '15:55', duration: 50},
-            {day: 'Thứ sáu', date: '31/10/2025', block: '11', session: 'Chiều', subject: 'Anh', startTime: '15:05', endTime: '15:55', duration: 50},
-            {day: 'Thứ hai', date: '27/10/2025', block: '11', session: 'Chiều', subject: 'Địa', startTime: '15:45', endTime: '16:35', duration: 50},
-            {day: 'Thứ tư', date: '29/10/2025', block: '11', session: 'Chiều', subject: 'Sử', startTime: '15:05', endTime: '15:55', duration: 50},
-            {day: 'Thứ hai', date: '27/10/2025', block: '12', session: 'Sáng', subject: 'Văn', startTime: '07:30', endTime: '09:00', duration: 90},
-            {day: 'Thứ tư', date: '29/10/2025', block: '12', session: 'Sáng', subject: 'Toán', startTime: '07:30', endTime: '08:20', duration: 50},
-            {day: 'Thứ sáu', date: '31/10/2025', block: '12', session: 'Sáng', subject: 'Lý', startTime: '07:30', endTime: '08:20', duration: 50},
-            {day: 'Thứ hai', date: '27/10/2025', block: '12', session: 'Sáng', subject: 'Anh', startTime: '09:45', endTime: '10:35', duration: 50},
-            {day: 'Thứ tư', date: '29/10/2025', block: '12', session: 'Sáng', subject: 'Sinh', startTime: '09:05', endTime: '09:55', duration: 50},
-            {day: 'Thứ sáu', date: '31/10/2025', block: '12', session: 'Sáng', subject: 'Hóa', startTime: '09:05', endTime: '09:55', duration: 50},
-            {day: 'Thứ tư', date: '29/10/2025', block: '12', session: 'Sáng', subject: 'Địa', startTime: '09:05', endTime: '09:55', duration: 50},
-            {day: 'Thứ sáu', date: '31/10/2025', block: '12', session: 'Sáng', subject: 'Sử', startTime: '09:05', endTime: '09:55', duration: 50}
+         
+
+  {day: 'Thứ hai', date: '15/12/2025', block: '10', session: 'Sáng', subject: 'Văn', startTime: '07:30', endTime: '09:00', duration: 90},
+  {day: 'Thứ hai', date: '15/12/2025', block: '10', session: 'Sáng', subject: 'Lý', startTime: '09:45', endTime: '10:30', duration: 45},
+
+  {day: 'Thứ ba', date: '16/12/2025', block: '10', session: 'Sáng', subject: 'Toán', startTime: '07:30', endTime: '09:00', duration: 90},
+  {day: 'Thứ ba', date: '16/12/2025', block: '10', session: 'Sáng', subject: 'Anh', startTime: '09:45', endTime: '10:45', duration: 60},
+
+  // Giả định phân bổ lần lượt cho 17→20/12 theo thứ tự môn hiển thị trong PDF:
+  {day: 'Thứ tư', date: '17/12/2025', block: '10', session: 'Sáng', subject: 'Hóa', startTime: '09:15', endTime: '10:00', duration: 45},
+  {day: 'Thứ năm', date: '18/12/2025', block: '10', session: 'Sáng', subject: 'Địa', startTime: '09:45', endTime: '10:30', duration: 45},
+  {day: 'Thứ sáu', date: '19/12/2025', block: '10', session: 'Sáng', subject: 'GDKT và PL', startTime: '09:45', endTime: '10:30', duration: 45},
+  {day: 'Thứ bảy', date: '20/12/2025', block: '10', session: 'Sáng', subject: 'Sử', startTime: '09:15', endTime: '10:00', duration: 45},
+  {day: 'Thứ bảy', date: '20/12/2025', block: '10', session: 'Sáng', subject: 'Sinh', startTime: '09:45', endTime: '10:30', duration: 45},
+
+  // ===== KHỐI 11 - CHIỀU =====
+  {day: 'Thứ hai', date: '15/12/2025', block: '11', session: 'Chiều', subject: 'Văn', startTime: '13:30', endTime: '15:00', duration: 90},
+  {day: 'Thứ hai', date: '15/12/2025', block: '11', session: 'Chiều', subject: 'Lý', startTime: '15:45', endTime: '16:30', duration: 45},
+
+  {day: 'Thứ ba', date: '16/12/2025', block: '11', session: 'Chiều', subject: 'Toán', startTime: '13:30', endTime: '15:00', duration: 90},
+  {day: 'Thứ ba', date: '16/12/2025', block: '11', session: 'Chiều', subject: 'Sinh', startTime: '15:45', endTime: '16:30', duration: 45},
+
+  {day: 'Thứ tư', date: '17/12/2025', block: '11', session: 'Chiều', subject: 'Anh', startTime: '13:30', endTime: '14:30', duration: 60},
+  {day: 'Thứ tư', date: '17/12/2025', block: '11', session: 'Chiều', subject: 'Hóa', startTime: '15:15', endTime: '16:00', duration: 45},
+
+  // Giả định phân bổ lần lượt cho 18→20/12 theo thứ tự môn hiển thị trong PDF:
+  {day: 'Thứ năm', date: '18/12/2025', block: '11', session: 'Chiều', subject: 'Địa', startTime: '15:45', endTime: '16:30', duration: 45},
+  {day: 'Thứ sáu', date: '19/12/2025', block: '11', session: 'Chiều', subject: 'GDKT và PL', startTime: '15:15', endTime: '16:00', duration: 45},
+  {day: 'Thứ bảy', date: '20/12/2025', block: '11', session: 'Chiều', subject: 'Sử', startTime: '15:45', endTime: '16:30', duration: 45},
+
+  // ===== KHỐI 12 - SÁNG =====
+  {day: 'Thứ hai', date: '15/12/2025', block: '12', session: 'Sáng', subject: 'Văn', startTime: '07:30', endTime: '09:00', duration: 90},
+  {day: 'Thứ ba', date: '16/12/2025', block: '12', session: 'Sáng', subject: 'Toán', startTime: '07:30', endTime: '09:00', duration: 90},
+  {day: 'Thứ tư', date: '17/12/2025', block: '12', session: 'Sáng', subject: 'Anh', startTime: '07:30', endTime: '08:30', duration: 60},
+
+  // Giả định phân bổ lần lượt cho 18→20/12 theo thứ tự môn hiển thị trong PDF:
+  {day: 'Thứ năm', date: '18/12/2025', block: '12', session: 'Sáng', subject: 'Hóa', startTime: '09:45', endTime: '10:30', duration: 45},
+  {day: 'Thứ sáu', date: '19/12/2025', block: '12', session: 'Sáng', subject: 'Sinh', startTime: '09:45', endTime: '10:30', duration: 45},
+  {day: 'Thứ bảy', date: '20/12/2025', block: '12', session: 'Sáng', subject: 'Lý', startTime: '09:15', endTime: '10:00', duration: 45},
+  {day: 'Thứ bảy', date: '20/12/2025', block: '12', session: 'Sáng', subject: 'Sử', startTime: '09:45', endTime: '10:30', duration: 45},
+  {day: 'Thứ bảy', date: '20/12/2025', block: '12', session: 'Sáng', subject: 'Địa', startTime: '09:45', endTime  {day: 'Thứ bảy', date: '20/12/2025', block: '12', session: 'Sáng', subject: 'Địa', startTime: '09:45', endTime: '10:30', duration: 45}
+
         ];
         let filteredData = [];
         let selectedBlock = '';
@@ -562,7 +578,7 @@
             ctx.fillText('THPT Nguyễn Khuyến', canvas.width / 2, 80);
             
             ctx.font = 'bold 36px Arial';
-            ctx.fillText('LỊCH KIỂM TRA GIỮA HỌC KÌ I', canvas.width / 2, 140);
+            ctx.fillText('LỊCH KIỂM TRA HỌC KÌ I', canvas.width / 2, 140);
             
             ctx.font = '28px Arial';
             ctx.fillText('NĂM HỌC 2025-2026', canvas.width / 2, 180);
@@ -850,3 +866,4 @@
     </script>
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98ed55b811e955de',t:'MTc2MDUxMDUyOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
