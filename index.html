@@ -3,532 +3,384 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lịch Kiểm Tra Học Kỳ I</title>
+  <title>Lịch Kiểm Tra HK II</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
   <script src="/_sdk/element_sdk.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
   <style>
-    body {
-      box-sizing: border-box;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-    }
-    
-    .subject-card {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    .subject-card:hover {
-      transform: translateY(-4px) scale(1.02);
-    }
-    
-    .grade-selector {
-      transition: all 0.3s ease;
-    }
-    
-    .grade-selector:hover:not(.active) {
-      transform: translateY(-2px);
-    }
-    
-    .filter-chip {
-      transition: all 0.2s ease;
-    }
-    
-    .filter-chip:hover {
-      transform: scale(1.05);
-    }
-
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    
-    .animate-slide-in {
-      animation: slideIn 0.5s ease-out forwards;
-    }
-  </style>
-  <style>@view-transition { navigation: auto; }</style>
+  * { font-family: 'Be Vietnam Pro', sans-serif; }
+  .tab-active { background: var(--primary); color: #fff; transform: scale(1.05); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+  .tab-inactive { background: #fff; color: #475569; border: 2px solid #e2e8f0; }
+  .tab-inactive:hover { border-color: var(--primary); color: var(--primary); }
+  .fade-in { animation: fadeIn 0.4s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  .row-hover:hover { background: var(--row-hover) !important; }
+  :root {
+    --bg: #f0f9ff;
+    --primary: #0ea5e9;
+    --surface: #ffffff;
+    --text: #1e293b;
+    --accent2: #f97316;
+    --row-hover: #e0f2fe;
+  }
+  .grade-10 { --primary: #10b981; --row-hover: #d1fae5; --bg: #ecfdf5; }
+  .grade-11 { --primary: #8b5cf6; --row-hover: #ede9fe; --bg: #f5f3ff; }
+  .grade-12 { --primary: #0ea5e9; --row-hover: #e0f2fe; --bg: #f0f9ff; }
+  .date-badge { background: var(--primary); }
+  .subject-pill { background: color-mix(in srgb, var(--primary) 12%, transparent); color: var(--primary); }
+  .time-chip { background: color-mix(in srgb, var(--accent2) 10%, transparent); color: #ea580c; }
+</style>
+  <style>body { box-sizing: border-box; }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
  </head>
  <body class="h-full">
-  <div id="app" class="w-full h-full overflow-auto"></div>
+  <div id="app" class="h-full w-full overflow-auto grade-12" style="background:var(--bg); transition: background 0.4s;">
+   <!-- Header -->
+   <header class="text-center pt-8 pb-4 px-4 fade-in">
+    <p class="text-sm font-600 mb-2" style="color:var(--primary);">🏫 TRƯỜNG THPT NGUYỄN KHUYẾN</p>
+    <div class="inline-flex items-center gap-2 mb-3 px-4 py-1.5 rounded-full text-sm font-medium" style="background:color-mix(in srgb, var(--primary) 15%, transparent); color:var(--primary);">
+     <i data-lucide="calendar-check" style="width:16px;height:16px;"></i> <span id="school-year-badge">Năm học 2025-2026</span>
+    </div>
+    <h1 id="main-title" class="text-2xl md:text-3xl font-800 tracking-tight mb-1" style="color:var(--text);">LỊCH KIỂM TRA CUỐI HỌC KỲ II</h1>
+    <p class="text-slate-500 text-sm">Chọn khối lớp để xem lịch thi</p>
+   </header><!-- Tabs -->
+   <nav class="flex justify-center gap-3 px-4 mb-6 fade-in" style="animation-delay:0.1s;">
+    <button onclick="switchGrade(10)" id="tab-10" class="tab-inactive px-6 py-2.5 rounded-xl font-600 text-sm transition-all duration-300 cursor-pointer flex items-center gap-2"> <i data-lucide="school" style="width:16px;height:16px;"></i> Khối 10 </button> <button onclick="switchGrade(11)" id="tab-11" class="tab-inactive px-6 py-2.5 rounded-xl font-600 text-sm transition-all duration-300 cursor-pointer flex items-center gap-2"> <i data-lucide="book-open" style="width:16px;height:16px;"></i> Khối 11 </button> <button onclick="switchGrade(12)" id="tab-12" class="tab-active px-6 py-2.5 rounded-xl font-600 text-sm transition-all duration-300 cursor-pointer flex items-center gap-2"> <i data-lucide="graduation-cap" style="width:16px;height:16px;"></i> Khối 12 </button>
+   </nav><!-- Important Notice -->
+   <div class="max-w-4xl mx-auto px-4 mb-6 fade-in" style="animation-delay:0.2s;">
+    <div class="rounded-2xl overflow-hidden shadow-md border-2" style="border-color:var(--accent2); background:color-mix(in srgb, var(--accent2) 5%, transparent);">
+     <div class="px-5 py-4 flex items-start gap-3"><i data-lucide="alert-circle" style="width:24px;height:24px;color:#ea580c;flex-shrink:0;margin-top:2px;"></i>
+      <div class="flex-1">
+       <h3 class="font-700 mb-3" style="color:#ea580c;">⚠️ LƯU Ý QUAN TRỌNG</h3>
+       <ul class="space-y-2 text-sm">
+        <li class="flex items-start gap-2"><span class="font-700 text-base" style="color:#ea580c;">🕐</span> <span style="color:var(--text);">Học sinh phải có mặt: <strong>Buổi sáng 7h00 - Buổi chiều 13h00</strong></span></li>
+        <li class="flex items-start gap-2"><span class="font-700 text-base" style="color:#ea580c;">🚫</span> <span style="color:var(--text);">Đến muộn sau <strong>5 phút</strong> kể từ giờ phát đề sẽ <strong>KHÔNG được vào phòng thi</strong></span></li>
+        <li class="flex items-start gap-2"><span class="font-700 text-base" style="color:#10b981;">✅</span> <span style="color:var(--text);">Các buổi không có lịch kiểm tra, học sinh được <strong>nghỉ học</strong></span></li>
+       </ul>
+      </div>
+     </div>
+    </div>
+   </div><!-- Schedule Content -->
+   <div id="schedule-container" class="max-w-4xl mx-auto px-4 pb-10"></div><!-- Footer -->
+   <footer class="text-center py-6 text-xs text-slate-400">
+    <p>⚡ Chúc các em ôn thi tốt và đạt kết quả cao!</p>
+   </footer>
+  </div>
   <script>
-    const examSchedule = [
-      // KHỐI 10 - BUỔI SÁNG
-      { weekday: 'Thứ Ba', date: '16/12/2025', grade: '10', period: 'Sáng', subject: 'Ngữ Văn', start: '07:30', end: '09:00', minutes: 90 },
-      { weekday: 'Thứ Ba', date: '16/12/2025', grade: '10', period: 'Sáng', subject: 'Vật Lý', start: '09:45', end: '10:30', minutes: 45 },
-      { weekday: 'Thứ Ba', date: '16/12/2025', grade: '10', period: 'Sáng', subject: 'Địa Lý', start: '09:45', end: '10:30', minutes: 45 },
-      { weekday: 'Thứ Ba', date: '16/12/2025', grade: '10', period: 'Sáng', subject: 'Sinh Học', start: '09:45', end: '10:30', minutes: 45 },
-      { weekday: 'Thứ Năm', date: '18/12/2025', grade: '10', period: 'Sáng', subject: 'Toán Học', start: '07:30', end: '09:00', minutes: 90 },
-      { weekday: 'Thứ Năm', date: '18/12/2025', grade: '10', period: 'Sáng', subject: 'Tiếng Anh', start: '09:45', end: '10:45', minutes: 60 },
-      { weekday: 'Thứ Năm', date: '18/12/2025', grade: '10', period: 'Sáng', subject: 'GDKT&PL', start: '09:45', end: '10:30', minutes: 45 },
-      { weekday: 'Thứ Sáu', date: '19/12/2025', grade: '10', period: 'Sáng', subject: 'Hóa Học', start: '09:15', end: '10:00', minutes: 45 },
-      { weekday: 'Thứ Sáu', date: '19/12/2025', grade: '10', period: 'Sáng', subject: 'Lịch Sử', start: '09:15', end: '10:00', minutes: 45 },
+const scheduleData = {
+  12: [
+    { date: "20/4/2026", session: "Sáng", exams: [
+      { subject: "Ngữ văn", duration: "90 phút", distribute: "07:25", start: "07:30", end: "09:00" },
+      { subject: "Hóa học / Lịch Sử", duration: "45 phút", distribute: "09:40", start: "09:45", end: "10:30" }
+    ]},
+    { date: "22/4/2026", session: "Sáng", exams: [
+      { subject: "Toán", duration: "90 phút", distribute: "07:25", start: "07:30", end: "09:00" },
+      { subject: "Sinh học / Địa lý", duration: "45 phút", distribute: "09:40", start: "09:45", end: "10:30" }
+    ]},
+    { date: "24/4/2026", session: "Sáng", exams: [
+      { subject: "Ngoại ngữ", duration: "60 phút", distribute: "07:25", start: "07:30", end: "08:30" },
+      { subject: "Vật Lý", duration: "45 phút", distribute: "09:10", start: "09:15", end: "10:00" }
+    ]}
+  ],
+  11: [
+    { date: "20/4/2026", session: "Chiều", exams: [
+      { subject: "Ngữ văn", duration: "90 phút", distribute: "13:25", start: "13:30", end: "15:00" },
+      { subject: "Vật Lý / Địa lý", duration: "45 phút", distribute: "15:40", start: "15:45", end: "16:30" }
+    ]},
+    { date: "22/4/2026", session: "Chiều", exams: [
+      { subject: "Toán", duration: "90 phút", distribute: "13:25", start: "13:30", end: "15:00" },
+      { subject: "Sinh học / Lịch Sử", duration: "45 phút", distribute: "15:40", start: "15:45", end: "16:30" }
+    ]},
+    { date: "24/4/2026", session: "Chiều", exams: [
+      { subject: "Ngoại ngữ", duration: "60 phút", distribute: "13:25", start: "13:30", end: "14:30" },
+      { subject: "Hóa học / GDKT và PL", duration: "45 phút", distribute: "15:10", start: "15:15", end: "16:00" }
+    ]}
+  ],
+  10: [
+    { date: "21/4/2026", session: "Sáng", exams: [
+      { subject: "Ngữ văn", duration: "90 phút", distribute: "07:25", start: "07:30", end: "09:00" },
+      { subject: "Vật Lý / Sinh học / Địa lý", duration: "45 phút", distribute: "09:40", start: "09:45", end: "10:30" }
+    ]},
+    { date: "23/4/2026", session: "Sáng", exams: [
+      { subject: "Toán", duration: "90 phút", distribute: "07:25", start: "07:30", end: "09:00" },
+      { subject: "Ngoại ngữ", duration: "60 phút", distribute: "09:40", start: "09:45", end: "10:45" },
+      { subject: "GDKT và PL", duration: "45 phút", distribute: "09:40", start: "09:45", end: "10:30" }
+    ]},
+    { date: "24/4/2026", session: "Sáng", exams: [
+      { subject: "Hóa học", duration: "45 phút", distribute: "09:10", start: "09:15", end: "10:00" },
+      { subject: "Lịch Sử", duration: "45 phút", distribute: "09:10", start: "09:15", end: "10:00" }
+    ]}
+  ]
+};
 
-      // KHỐI 11 - BUỔI CHIỀU
-      { weekday: 'Thứ Hai', date: '15/12/2025', grade: '11', period: 'Chiều', subject: 'Ngữ Văn', start: '13:30', end: '15:00', minutes: 90 },
-      { weekday: 'Thứ Hai', date: '15/12/2025', grade: '11', period: 'Chiều', subject: 'Vật Lý', start: '15:45', end: '16:30', minutes: 45 },
-      { weekday: 'Thứ Hai', date: '15/12/2025', grade: '11', period: 'Chiều', subject: 'Địa Lý', start: '15:45', end: '16:30', minutes: 45 },
-      { weekday: 'Thứ Tư', date: '17/12/2025', grade: '11', period: 'Chiều', subject: 'Toán Học', start: '13:30', end: '15:00', minutes: 90 },
-      { weekday: 'Thứ Tư', date: '17/12/2025', grade: '11', period: 'Chiều', subject: 'Sinh Học', start: '15:45', end: '16:30', minutes: 45 },
-      { weekday: 'Thứ Tư', date: '17/12/2025', grade: '11', period: 'Chiều', subject: 'Lịch Sử', start: '15:45', end: '16:30', minutes: 45 },
-      { weekday: 'Thứ Sáu', date: '19/12/2025', grade: '11', period: 'Chiều', subject: 'Tiếng Anh', start: '13:30', end: '14:30', minutes: 60 },
-      { weekday: 'Thứ Sáu', date: '19/12/2025', grade: '11', period: 'Chiều', subject: 'Hóa Học', start: '15:15', end: '16:00', minutes: 45 },
-      { weekday: 'Thứ Sáu', date: '19/12/2025', grade: '11', period: 'Chiều', subject: 'GDKT&PL', start: '15:15', end: '16:00', minutes: 45 },
+const subjectIcons = {
+  "Ngữ văn": "pen-tool", "Toán": "calculator", "Ngoại ngữ": "globe",
+  "Hóa học / Lịch Sử": "flask-round", "Sinh học / Địa lý": "leaf",
+  "Vật Lý": "atom", default: "book"
+};
 
-      // KHỐI 12 - BUỔI SÁNG
-      { weekday: 'Thứ Hai', date: '15/12/2025', grade: '12', period: 'Sáng', subject: 'Ngữ Văn', start: '07:30', end: '09:00', minutes: 90 },
-      { weekday: 'Thứ Hai', date: '15/12/2025', grade: '12', period: 'Sáng', subject: 'Hóa Học', start: '09:45', end: '10:30', minutes: 45 },
-      { weekday: 'Thứ Hai', date: '15/12/2025', grade: '12', period: 'Sáng', subject: 'Lịch Sử', start: '09:45', end: '10:30', minutes: 45 },
-      { weekday: 'Thứ Tư', date: '17/12/2025', grade: '12', period: 'Sáng', subject: 'Toán Học', start: '07:30', end: '09:00', minutes: 90 },
-      { weekday: 'Thứ Tư', date: '17/12/2025', grade: '12', period: 'Sáng', subject: 'Sinh Học', start: '09:45', end: '10:30', minutes: 45 },
-      { weekday: 'Thứ Tư', date: '17/12/2025', grade: '12', period: 'Sáng', subject: 'Địa Lý', start: '09:45', end: '10:30', minutes: 45 },
-      { weekday: 'Thứ Sáu', date: '19/12/2025', grade: '12', period: 'Sáng', subject: 'Tiếng Anh', start: '07:30', end: '08:30', minutes: 60 },
-      { weekday: 'Thứ Sáu', date: '19/12/2025', grade: '12', period: 'Sáng', subject: 'Vật Lý', start: '09:15', end: '10:00', minutes: 45 }
-    ];
+let currentGrade = 12;
 
-    const defaultConfig = {
-      page_title: 'Lịch Kiểm Tra Học Kỳ I',
-      subtitle: 'Năm học 2025-2026',
-      school_name: 'THPT Nguyễn Khuyến',
-      primary_color: '#10b981',
-      secondary_color: '#059669',
-      surface_color: '#ffffff',
-      background_color: '#f8fafc',
-      text_color: '#0f172a',
-      font_family: 'Inter',
-      font_size: 16
-    };
+function getIcon(subject) {
+  for (const [key, icon] of Object.entries(subjectIcons)) {
+    if (subject.includes(key.split(" ")[0])) return icon;
+  }
+  return subjectIcons.default;
+}
 
-    let selectedGrade = '10';
-    let selectedDate = 'all';
-    let selectedPeriod = 'all';
+function renderSchedule(grade) {
+  const container = document.getElementById("schedule-container");
+  const data = scheduleData[grade];
+  let html = "";
 
-    function getSubjectIcon(subject) {
-      const icons = {
-        'Ngữ Văn': '📚',
-        'Toán Học': '🔢',
-        'Tiếng Anh': '🌍',
-        'Vật Lý': '⚡',
-        'Hóa Học': '🧪',
-        'Sinh Học': '🧬',
-        'Lịch Sử': '📜',
-        'Địa Lý': '🗺️',
-        'GDKT&PL': '⚖️'
-      };
-      return icons[subject] || '📖';
-    }
+  data.forEach((day, di) => {
+    html += `<div class="fade-in mb-6" style="animation-delay:${di * 0.12}s;">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="date-badge text-white text-sm font-700 px-4 py-1.5 rounded-full shadow-md flex items-center gap-2">
+          <i data-lucide="calendar" style="width:14px;height:14px;"></i> ${day.date}
+        </span>
+        <span class="text-xs font-500 px-3 py-1 rounded-full" style="background:color-mix(in srgb, var(--accent2) 12%, transparent); color:#ea580c;">
+          ${day.session}
+        </span>
+      </div>
+      <div class="rounded-2xl overflow-hidden shadow-sm border border-slate-100" style="background:var(--surface);">
+        <table class="w-full text-sm">
+          <thead>
+            <tr style="background:color-mix(in srgb, var(--primary) 8%, transparent);">
+              <th class="text-left py-3 px-4 font-600 text-xs uppercase tracking-wider" style="color:var(--primary);">Môn thi</th>
+              <th class="text-center py-3 px-3 font-600 text-xs uppercase tracking-wider hidden sm:table-cell" style="color:var(--primary);">Thời gian</th>
+              <th class="text-center py-3 px-3 font-600 text-xs uppercase tracking-wider" style="color:var(--primary);">Phát đề</th>
+              <th class="text-center py-3 px-3 font-600 text-xs uppercase tracking-wider" style="color:var(--primary);">Bắt đầu</th>
+              <th class="text-center py-3 px-3 font-600 text-xs uppercase tracking-wider" style="color:var(--primary);">Thu bài</th>
+            </tr>
+          </thead>
+          <tbody>`;
 
-    function getSubjectGradient(subject) {
-      const gradients = {
-        'Ngữ Văn': 'linear-gradient(135deg, #f43f5e 0%, #ec4899 100%)',
-        'Toán Học': 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-        'Tiếng Anh': 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-        'Vật Lý': 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
-        'Hóa Học': 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-        'Sinh Học': 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)',
-        'Lịch Sử': 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
-        'Địa Lý': 'linear-gradient(135deg, #84cc16 0%, #65a30d 100%)',
-        'GDKT&PL': 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)'
-      };
-      return gradients[subject] || 'linear-gradient(135deg, #64748b 0%, #475569 100%)';
-    }
-
-    function organizeByDateAndPeriod(exams) {
-      const organized = {};
-      exams.forEach(exam => {
-        const key = `${exam.date}_${exam.period}`;
-        if (!organized[key]) {
-          organized[key] = {
-            weekday: exam.weekday,
-            date: exam.date,
-            period: exam.period,
-            subjects: []
-          };
-        }
-        organized[key].subjects.push(exam);
-      });
-      
-      return Object.values(organized).sort((a, b) => {
-        const dateCompare = a.date.split('/').reverse().join('').localeCompare(b.date.split('/').reverse().join(''));
-        if (dateCompare !== 0) return dateCompare;
-        return a.period === 'Sáng' ? -1 : 1;
-      });
-    }
-
-    async function render() {
-      const config = window.elementSdk?.config || defaultConfig;
-      const customFont = config.font_family || defaultConfig.font_family;
-      const baseSize = config.font_size || defaultConfig.font_size;
-      const fontStack = `${customFont}, 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif`;
-
-      let filteredExams = examSchedule.filter(e => e.grade === selectedGrade);
-      
-      if (selectedDate !== 'all') {
-        filteredExams = filteredExams.filter(e => e.date === selectedDate);
-      }
-      if (selectedPeriod !== 'all') {
-        filteredExams = filteredExams.filter(e => e.period === selectedPeriod);
-      }
-      
-      const organized = organizeByDateAndPeriod(filteredExams);
-      const uniqueDates = [...new Set(examSchedule.filter(e => e.grade === selectedGrade).map(e => e.date))].sort((a, b) => {
-        return a.split('/').reverse().join('').localeCompare(b.split('/').reverse().join(''));
-      });
-
-      document.getElementById('app').innerHTML = `
-        <div style="background: ${config.background_color || defaultConfig.background_color}; min-height: 100%; font-family: ${fontStack};">
-          
-          <!-- Hero Header -->
-          <div style="background: linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, ${config.secondary_color || defaultConfig.secondary_color} 100%); padding: 40px 24px 60px; position: relative; overflow: hidden;">
-            
-            <div style="max-width: 1200px; margin: 0 auto; position: relative; z-index: 1;">
-              <a href="https://tkbnkhoahung.github.io/tkbnk2526hs/" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); color: white; padding: 10px 20px; border-radius: 12px; font-weight: 600; font-size: ${baseSize * 0.875}px; text-decoration: none; border: 2px solid rgba(255, 255, 255, 0.3); transition: all 0.2s; margin-bottom: 24px;">
-                <span style="font-size: ${baseSize * 1.2}px;">🏠</span>
-                <span>Trang Chủ</span>
-              </a>
-              
-              <div style="text-align: center; color: white;">
-                <div style="display: inline-block; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); padding: 6px 16px; border-radius: 20px; font-size: ${baseSize * 0.85}px; font-weight: 600; margin-bottom: 16px; border: 1px solid rgba(255, 255, 255, 0.3);">
-                  ${config.school_name || defaultConfig.school_name}
-                </div>
-                <h1 style="font-size: ${baseSize * 2.2}px; font-weight: 900; margin: 0 0 12px 0; letter-spacing: -1px; text-shadow: 0 2px 10px rgba(0,0,0,0.1);">${config.page_title || defaultConfig.page_title}</h1>
-                <p style="font-size: ${baseSize * 1.1}px; margin: 0; opacity: 0.95; font-weight: 500;">${config.subtitle || defaultConfig.subtitle}</p>
-              </div>
-            </div>
+    day.exams.forEach((exam, ei) => {
+      const icon = getIcon(exam.subject);
+      const borderTop = ei > 0 ? "border-t border-slate-100" : "";
+      html += `<tr class="row-hover transition-colors ${borderTop}">
+        <td class="py-3 px-4">
+          <div class="flex items-center gap-2">
+            <span class="subject-pill w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0">
+              <i data-lucide="${icon}" style="width:16px;height:16px;"></i>
+            </span>
+            <span class="font-600" style="color:var(--text);">${exam.subject}</span>
           </div>
+        </td>
+        <td class="text-center py-3 px-3 hidden sm:table-cell">
+          <span class="time-chip text-xs font-600 px-2.5 py-1 rounded-full">${exam.duration}</span>
+        </td>
+        <td class="text-center py-3 px-3 text-slate-500 font-500">${exam.distribute}</td>
+        <td class="text-center py-3 px-3 font-700" style="color:var(--primary);">${exam.start}</td>
+        <td class="text-center py-3 px-3 font-600 text-red-500">${exam.end}</td>
+      </tr>`;
+    });
 
-          <div style="max-width: 1200px; margin: -40px auto 0; padding: 0 24px 40px; position: relative; z-index: 2;">
-            
-            <!-- Grade Selector Cards -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px;">
-              ${['10', '11', '12'].map(grade => `
-                <button class="grade-selector ${selectedGrade === grade ? 'active' : ''}" data-grade="${grade}" style="background: ${selectedGrade === grade ? `linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, ${config.secondary_color || defaultConfig.secondary_color} 100%)` : (config.surface_color || defaultConfig.surface_color)}; color: ${selectedGrade === grade ? 'white' : (config.text_color || defaultConfig.text_color)}; padding: 24px; border-radius: 20px; font-weight: 700; font-size: ${baseSize * 1.1}px; border: ${selectedGrade === grade ? 'none' : '2px solid #e2e8f0'}; cursor: pointer; box-shadow: ${selectedGrade === grade ? '0 10px 25px rgba(99, 102, 241, 0.3)' : '0 4px 12px rgba(0,0,0,0.05)'}; text-align: center;">
-                  <div style="font-size: ${baseSize * 2}px; margin-bottom: 8px;">🎓</div>
-                  <div>Khối ${grade}</div>
-                </button>
-              `).join('')}
-            </div>
+    html += `</tbody></table></div></div>`;
+  });
 
-            <!-- Export Button -->
-            <div style="text-align: center; margin-bottom: 32px;">
-              <button id="exportBtn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 16px 32px; border-radius: 16px; font-weight: 700; font-size: ${baseSize}px; border: none; cursor: pointer; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); transition: all 0.3s; display: inline-flex; align-items: center; gap: 12px;">
-                <span style="font-size: ${baseSize * 1.5}px;">📱</span>
-                <span>Xuất Hình Nền Khối ${selectedGrade}</span>
-              </button>
-            </div>
+  container.innerHTML = html;
+  lucide.createIcons();
+}
 
+function switchGrade(grade) {
+  currentGrade = grade;
+  const app = document.getElementById("app");
+  app.className = `h-full w-full overflow-auto grade-${grade}`;
 
+  [10, 11, 12].forEach(g => {
+    const tab = document.getElementById(`tab-${g}`);
+    tab.className = g === grade
+      ? "tab-active px-6 py-2.5 rounded-xl font-600 text-sm transition-all duration-300 cursor-pointer flex items-center gap-2"
+      : "tab-inactive px-6 py-2.5 rounded-xl font-600 text-sm transition-all duration-300 cursor-pointer flex items-center gap-2";
+  });
 
-            <!-- Important Notice -->
-            <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 20px; padding: 24px; margin-bottom: 32px; box-shadow: 0 4px 16px rgba(251, 191, 36, 0.2); border: 3px solid #fbbf24;">
-              <h3 style="font-size: ${baseSize * 1.2}px; font-weight: 900; color: #92400e; margin: 0 0 16px 0; display: flex; align-items: center; gap: 10px;">
-                <span style="font-size: ${baseSize * 1.5}px;">⚠️</span>
-                LƯU Ý QUAN TRỌNG
-              </h3>
-              
-              <div style="display: grid; gap: 12px;">
-                <div style="display: flex; align-items: start; gap: 12px; background: rgba(255, 255, 255, 0.8); padding: 16px; border-radius: 12px; border-left: 4px solid #f59e0b;">
-                  <span style="font-size: ${baseSize * 1.3}px; flex-shrink: 0;">🕐</span>
-                  <p style="margin: 0; font-size: ${baseSize * 0.95}px; font-weight: 700; color: #78350f; line-height: 1.6;">
-                    Học sinh phải có mặt: <span style="color: #dc2626;">Buổi sáng 7h00 - Buổi chiều 13h00</span>
-                  </p>
-                </div>
-                
-                <div style="display: flex; align-items: start; gap: 12px; background: rgba(255, 255, 255, 0.8); padding: 16px; border-radius: 12px; border-left: 4px solid #ef4444;">
-                  <span style="font-size: ${baseSize * 1.3}px; flex-shrink: 0;">🚫</span>
-                  <p style="margin: 0; font-size: ${baseSize * 0.95}px; font-weight: 700; color: #78350f; line-height: 1.6;">
-                    Đến muộn sau <span style="color: #dc2626;">5 phút</span> kể từ giờ phát đề sẽ <span style="color: #dc2626;">KHÔNG được vào phòng thi</span>
-                  </p>
-                </div>
-                
-                <div style="display: flex; align-items: start; gap: 12px; background: rgba(255, 255, 255, 0.8); padding: 16px; border-radius: 12px; border-left: 4px solid #10b981;">
-                  <span style="font-size: ${baseSize * 1.3}px; flex-shrink: 0;">✅</span>
-                  <p style="margin: 0; font-size: ${baseSize * 0.95}px; font-weight: 700; color: #78350f; line-height: 1.6;">
-                    Các buổi không có lịch kiểm tra, học sinh được nghỉ học
-                  </p>
-                </div>
-              </div>
-            </div>
+  renderSchedule(grade);
+}
 
-            <!-- Exam Schedule -->
-            <div style="display: grid; gap: 24px;">
-              ${organized.map((session, idx) => `
-                <div class="animate-slide-in" style="animation-delay: ${idx * 0.1}s;">
-                  <div style="background: ${config.surface_color || defaultConfig.surface_color}; border-radius: 20px; padding: 24px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); border: 2px solid #e2e8f0;">
-                    
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 2px solid #e2e8f0;">
-                      <div>
-                        <h2 style="font-size: ${baseSize * 1.3}px; font-weight: 900; color: ${config.text_color || defaultConfig.text_color}; margin: 0 0 6px 0; letter-spacing: -0.5px;">
-                          ${session.weekday}, ${session.date}
-                        </h2>
-                        <span style="display: inline-block; background: linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, ${config.secondary_color || defaultConfig.secondary_color} 100%); color: white; padding: 6px 16px; border-radius: 20px; font-size: ${baseSize * 0.85}px; font-weight: 700;">
-                          ${session.period === 'Sáng' ? '🌅 Buổi Sáng' : ' Buổi Chiều'}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <div style="display: grid; gap: 16px;">
-                      ${session.subjects.map(exam => `
-                        <div class="subject-card" style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.9) 100%); border-radius: 16px; padding: 20px; border: 2px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-                          <div style="display: flex; align-items: center; gap: 16px;">
-                            
-                            <div style="width: 70px; height: 70px; background: ${getSubjectGradient(exam.subject)}; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                              <div style="font-size: ${baseSize * 1.5}px;">${getSubjectIcon(exam.subject)}</div>
-                              <div style="font-size: ${baseSize * 0.75}px; font-weight: 800; margin-top: 4px;">${exam.minutes}'</div>
-                            </div>
-                            
-                            <div style="flex: 1; min-width: 0;">
-                              <h3 style="font-size: ${baseSize * 1.2}px; font-weight: 800; color: ${config.text_color || defaultConfig.text_color}; margin: 0 0 8px 0; letter-spacing: -0.3px;">
-                                ${exam.subject}
-                              </h3>
-                              <div style="display: flex; flex-wrap: wrap; gap: 16px; font-size: ${baseSize * 0.95}px; color: #64748b; font-weight: 600;">
-                                <span style="display: flex; align-items: center; gap: 6px;">
-                                  <span style="font-size: ${baseSize * 1.1}px;">🕐</span>
-                                  ${exam.start} - ${exam.end}
-                                </span>
-                                <span style="display: flex; align-items: center; gap: 6px;">
-                                  <span style="font-size: ${baseSize * 1.1}px;">⏱️</span>
-                                  ${exam.minutes} phút
-                                </span>
-                              </div>
-                            </div>
-                            
-                          </div>
-                        </div>
-                      `).join('')}
-                    </div>
-                    
-                  </div>
-                </div>
-              `).join('')}
-            </div>
+// Element SDK
+const defaultConfig = {
+  main_title: "LỊCH KIỂM TRA CUỐI HỌC KỲ II",
+  school_year: "2025-2026",
+  background_color: "#f0f9ff",
+  surface_color: "#ffffff",
+  text_color: "#1e293b",
+  primary_color: "#0ea5e9",
+  accent_color: "#f97316",
+  font_family: "Be Vietnam Pro",
+  font_size: 14
+};
 
-            ${organized.length === 0 ? `
-              <div style="text-align: center; padding: 60px 24px; background: ${config.surface_color || defaultConfig.surface_color}; border-radius: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
-                <div style="font-size: ${baseSize * 3}px; margin-bottom: 16px;">📭</div>
-                <p style="color: #64748b; font-size: ${baseSize * 1.2}px; font-weight: 600; margin: 0;">
-                  Không tìm thấy lịch thi phù hợp với bộ lọc
-                </p>
-              </div>
-            ` : ''}
-            
-          </div>
-        </div>
-      `;
+window.elementSdk.init({
+  defaultConfig,
+  onConfigChange: async (config) => {
+    document.getElementById("main-title").textContent = config.main_title || defaultConfig.main_title;
+    document.getElementById("school-year-badge").textContent = `Năm học ${config.school_year || defaultConfig.school_year}`;
 
-      // Event Listeners
-      document.querySelectorAll('.grade-selector').forEach(btn => {
-        btn.addEventListener('click', () => {
-          selectedGrade = btn.dataset.grade;
-          selectedDate = 'all';
-          selectedPeriod = 'all';
-          render();
-        });
+    const font = config.font_family || defaultConfig.font_family;
+    document.body.style.fontFamily = `${font}, Be Vietnam Pro, sans-serif`;
+
+    const size = config.font_size || defaultConfig.font_size;
+    document.body.style.fontSize = `${size}px`;
+    document.getElementById("main-title").style.fontSize = `${size * 2}px`;
+  },
+  mapToCapabilities: (config) => ({
+    recolorables: [
+      { get: () => config.background_color || defaultConfig.background_color, set: v => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+      { get: () => config.surface_color || defaultConfig.surface_color, set: v => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+      { get: () => config.text_color || defaultConfig.text_color, set: v => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+      { get: () => config.primary_color || defaultConfig.primary_color, set: v => { config.primary_color = v; window.elementSdk.setConfig({ primary_color: v }); } },
+      { get: () => config.accent_color || defaultConfig.accent_color, set: v => { config.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); } }
+    ],
+    borderables: [],
+    fontEditable: { get: () => config.font_family || defaultConfig.font_family, set: v => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); } },
+    fontSizeable: { get: () => config.font_size || defaultConfig.font_size, set: v => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); } }
+  }),
+  mapToEditPanelValues: (config) => new Map([
+    ["main_title", config.main_title || defaultConfig.main_title],
+    ["school_year", config.school_year || defaultConfig.school_year]
+  ])
+});
+
+// Initial render
+renderSchedule(12);
+lucide.createIcons();
+
+function downloadWallpaper() {
+  const canvas = document.createElement("canvas");
+  const width = 1080;
+  const height = 3600;
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d");
+
+  // Gradient background
+  const gradient = ctx.createLinearGradient(0, 0, 0, height);
+  gradient.addColorStop(0, "#f0f9ff");
+  gradient.addColorStop(1, "#0ea5e9");
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, width, height);
+
+  // Helper function to draw text with wrapping
+  function drawText(text, x, y, maxWidth, fontSize, bold = false, color = "#fff") {
+    ctx.font = `${bold ? "bold " : ""}${fontSize}px 'Be Vietnam Pro', sans-serif`;
+    ctx.fillStyle = color;
+    ctx.fillText(text, x, y);
+  }
+
+  // Title section
+  ctx.font = "bold 64px 'Be Vietnam Pro', sans-serif";
+  ctx.fillStyle = "#fff";
+  ctx.textAlign = "center";
+  ctx.fillText("🏫 THPT NGUYỄN KHUYẾN", width / 2, 140);
+
+  ctx.font = "48px 'Be Vietnam Pro', sans-serif";
+  ctx.fillStyle = "rgba(255,255,255,0.95)";
+  ctx.fillText("LỊCH THI HỌC KỲ II", width / 2, 230);
+
+  ctx.font = "28px 'Be Vietnam Pro', sans-serif";
+  ctx.fillStyle = "rgba(255,255,255,0.8)";
+  ctx.fillText("Năm học 2025-2026", width / 2, 280);
+
+  let yPos = 360;
+
+  // Function to draw schedule for each grade
+  function drawGradeSchedule(gradeName, gradeData, gradeColor) {
+    // Grade header
+    ctx.fillStyle = gradeColor;
+    ctx.fillRect(40, yPos, width - 80, 60);
+    ctx.font = "bold 40px 'Be Vietnam Pro', sans-serif";
+    ctx.fillStyle = "#fff";
+    ctx.textAlign = "left";
+    ctx.fillText(gradeName, 60, yPos + 42);
+    yPos += 90;
+
+    gradeData.forEach((day, dayIndex) => {
+      // Date header
+      ctx.font = "bold 32px 'Be Vietnam Pro', sans-serif";
+      ctx.fillStyle = "#fff";
+      ctx.fillText(`📅 ${day.date} (${day.session})`, 60, yPos);
+      yPos += 50;
+
+      // Table header
+      ctx.fillStyle = "rgba(255,255,255,0.2)";
+      ctx.fillRect(40, yPos, width - 80, 45);
+      ctx.font = "bold 24px 'Be Vietnam Pro', sans-serif";
+      ctx.fillStyle = "#fff";
+      ctx.textAlign = "left";
+      ctx.fillText("Môn Thi", 60, yPos + 32);
+      ctx.textAlign = "center";
+      ctx.fillText("Phát đề", width / 2 - 100, yPos + 32);
+      ctx.fillText("Bắt đầu", width / 2 + 50, yPos + 32);
+      ctx.fillText("Thu bài", width - 120, yPos + 32);
+      yPos += 55;
+
+      // Exam rows
+      day.exams.forEach((exam, examIndex) => {
+        ctx.fillStyle = examIndex % 2 === 0 ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.04)";
+        ctx.fillRect(40, yPos, width - 80, 55);
+
+        ctx.font = "bold 26px 'Be Vietnam Pro', sans-serif";
+        ctx.fillStyle = "#fff";
+        ctx.textAlign = "left";
+        ctx.fillText(exam.subject, 60, yPos + 35);
+
+        ctx.font = "28px 'Be Vietnam Pro', sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(exam.distribute, width / 2 - 100, yPos + 35);
+        ctx.fillStyle = "#4ade80";
+        ctx.fillText(exam.start, width / 2 + 50, yPos + 35);
+        ctx.fillStyle = "#f87171";
+        ctx.fillText(exam.end, width - 120, yPos + 35);
+        yPos += 60;
       });
 
+      yPos += 20;
+    });
 
+    yPos += 30;
+  }
 
-      // Export functionality
-      const exportBtn = document.getElementById('exportBtn');
-      if (exportBtn) {
-        exportBtn.addEventListener('click', () => {
-          exportBtn.innerHTML = '<span style="font-size: ' + (baseSize * 1.5) + 'px;">⏳</span><span>Đang tạo hình nền...</span>';
-          exportBtn.style.pointerEvents = 'none';
-          
-          setTimeout(() => {
-            createWallpaper();
-          }, 100);
-        });
-      }
+  // Draw schedules for all grades
+  drawGradeSchedule("📚 KHỐI 10", scheduleData[10], "#10b981");
+  drawGradeSchedule("📖 KHỐI 11", scheduleData[11], "#8b5cf6");
+  drawGradeSchedule("🎓 KHỐI 12", scheduleData[12], "#0ea5e9");
 
-      function createWallpaper() {
-        const gradeExams = examSchedule.filter(e => e.grade === selectedGrade);
-        const organized = organizeByDateAndPeriod(gradeExams);
-        
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = 1080;
-        canvas.height = 1920;
-        
-        // Background
-        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        gradient.addColorStop(0, config.primary_color || defaultConfig.primary_color);
-        gradient.addColorStop(1, config.secondary_color || defaultConfig.secondary_color);
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        // Title
-        ctx.fillStyle = 'white';
-        ctx.font = 'bold 70px Inter, Arial, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText(config.page_title || defaultConfig.page_title, canvas.width / 2, 100);
-        
-        ctx.font = '45px Inter, Arial, sans-serif';
-        ctx.fillText(config.subtitle || defaultConfig.subtitle, canvas.width / 2, 170);
-        
-        ctx.font = 'bold 55px Inter, Arial, sans-serif';
-        ctx.fillText('KHỐI ' + selectedGrade, canvas.width / 2, 250);
-        
-        // Notice box
-        ctx.fillStyle = 'rgba(254, 243, 199, 0.95)';
-        ctx.fillRect(60, 300, canvas.width - 120, 270);
-        
-        ctx.fillStyle = '#92400e';
-        ctx.font = 'bold 40px Inter, Arial, sans-serif';
-        ctx.textAlign = 'left';
-        ctx.fillText('⚠️ LƯU Ý QUAN TRỌNG', 100, 360);
-        
-        ctx.font = '30px Inter, Arial, sans-serif';
-        ctx.fillText('🕐 Có mặt: Sáng 7h00, Chiều 13h00', 100, 420);
-        ctx.fillText('🚫 Trễ 5 phút không được vào phòng', 100, 475);
-        ctx.fillText('✅ Buổi không thi được nghỉ', 100, 530);
-        
-        // Schedule
-        let yPos = 630;
-        const cardWidth = canvas.width - 120;
-        
-        organized.forEach((session) => {
-          if (yPos > canvas.height - 150) return;
-          
-          // Session header
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-          ctx.fillRect(60, yPos, cardWidth, 75);
-          
-          ctx.fillStyle = config.text_color || defaultConfig.text_color;
-          ctx.font = 'bold 38px Inter, Arial, sans-serif';
-          ctx.textAlign = 'left';
-          ctx.fillText(`${session.weekday}, ${session.date} - ${session.period}`, 100, yPos + 48);
-          
-          yPos += 90;
-          
-          // Subjects
-          session.subjects.forEach((exam) => {
-            if (yPos > canvas.height - 80) return;
-            
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-            ctx.fillRect(60, yPos, cardWidth, 85);
-            
-            // Subject name
-            ctx.fillStyle = config.text_color || defaultConfig.text_color;
-            ctx.font = 'bold 36px Inter, Arial, sans-serif';
-            ctx.fillText(`${getSubjectIcon(exam.subject)} ${exam.subject}`, 100, yPos + 40);
-            
-            // Time
-            ctx.font = '28px Inter, Arial, sans-serif';
-            ctx.fillStyle = '#64748b';
-            ctx.fillText(`${exam.start} - ${exam.end} (${exam.minutes} phút)`, 100, yPos + 70);
-            
-            yPos += 95;
-          });
-          
-          yPos += 10;
-        });
-        
-        // Footer
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-        ctx.font = 'bold 32px Inter, Arial, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('🏫 Chúc các em thi tốt!', canvas.width / 2, canvas.height - 50);
-        
-        // Download
-        canvas.toBlob((blob) => {
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `Lich_Thi_Khoi_${selectedGrade}.png`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-          
-          const exportBtn = document.getElementById('exportBtn');
-          exportBtn.innerHTML = '<span style="font-size: ' + (baseSize * 1.5) + 'px;">✅</span><span>Đã tải xuống!</span>';
-          setTimeout(() => {
-            exportBtn.innerHTML = '<span style="font-size: ' + (baseSize * 1.5) + 'px;">📱</span><span>Xuất Hình Nền Khối ' + selectedGrade + '</span>';
-            exportBtn.style.pointerEvents = 'auto';
-          }, 2000);
-        });
-      }
-    }
+  // Important notes section
+  yPos += 20;
+  ctx.fillStyle = "rgba(255,255,255,0.15)";
+  ctx.fillRect(40, yPos, width - 80, 200);
+  ctx.strokeStyle = "rgba(255,255,255,0.4)";
+  ctx.lineWidth = 3;
+  ctx.strokeRect(40, yPos, width - 80, 200);
 
-    const api = {
-      defaultConfig,
-      onConfigChange: render,
-      mapToCapabilities: (config) => ({
-        recolorables: [
-          {
-            get: () => config.background_color || defaultConfig.background_color,
-            set: (value) => {
-              config.background_color = value;
-              window.elementSdk.setConfig({ background_color: value });
-            }
-          },
-          {
-            get: () => config.surface_color || defaultConfig.surface_color,
-            set: (value) => {
-              config.surface_color = value;
-              window.elementSdk.setConfig({ surface_color: value });
-            }
-          },
-          {
-            get: () => config.text_color || defaultConfig.text_color,
-            set: (value) => {
-              config.text_color = value;
-              window.elementSdk.setConfig({ text_color: value });
-            }
-          },
-          {
-            get: () => config.primary_color || defaultConfig.primary_color,
-            set: (value) => {
-              config.primary_color = value;
-              window.elementSdk.setConfig({ primary_color: value });
-            }
-          },
-          {
-            get: () => config.secondary_color || defaultConfig.secondary_color,
-            set: (value) => {
-              config.secondary_color = value;
-              window.elementSdk.setConfig({ secondary_color: value });
-            }
-          }
-        ],
-        borderables: [],
-        fontEditable: {
-          get: () => config.font_family || defaultConfig.font_family,
-          set: (value) => {
-            config.font_family = value;
-            window.elementSdk.setConfig({ font_family: value });
-          }
-        },
-        fontSizeable: {
-          get: () => config.font_size || defaultConfig.font_size,
-          set: (value) => {
-            config.font_size = value;
-            window.elementSdk.setConfig({ font_size: value });
-          }
-        }
-      }),
-      mapToEditPanelValues: (config) => new Map([
-        ['page_title', config.page_title || defaultConfig.page_title],
-        ['subtitle', config.subtitle || defaultConfig.subtitle],
-        ['school_name', config.school_name || defaultConfig.school_name]
-      ])
-    };
+  ctx.font = "bold 32px 'Be Vietnam Pro', sans-serif";
+  ctx.fillStyle = "#fbbf24";
+  ctx.textAlign = "center";
+  ctx.fillText("⚠️  LƯU Ý QUAN TRỌNG", width / 2, yPos + 45);
 
-    if (window.elementSdk) {
-      window.elementSdk.init(api);
-    }
+  ctx.font = "26px 'Be Vietnam Pro', sans-serif";
+  ctx.fillStyle = "#fff";
+  ctx.textAlign = "left";
+  ctx.fillText("🕐 Phải có mặt đúng giờ phát đề", 60, yPos + 85);
+  ctx.fillText("🚫 Đến muộ hơn 5 phút: KHÔNG vào", 60, yPos + 125);
+  ctx.fillText("✅ Không có thi: Được nghỉ học", 60, yPos + 165);
 
-    render();
-  </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9acee2a5775309c0',t:'MTc2NTU1OTk1Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  // Footer
+  ctx.font = "28px 'Be Vietnam Pro', sans-serif";
+  ctx.fillStyle = "rgba(255,255,255,0.8)";
+  ctx.textAlign = "center";
+  ctx.fillText("💪 Chúc các em ôn tập chăm chỉ!", width / 2, height - 100);
+  ctx.fillText("✨ Đạt kết quả cao trong kỳ thi!", width / 2, height - 50);
+
+  // Download
+  const link = document.createElement("a");
+  link.href = canvas.toDataURL("image/png");
+  link.download = "lich-thi-hk2-wallpaper.png";
+  link.click();
+}
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ee850b753d97b39',t:'MTc3NjU2NDAyMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
-
